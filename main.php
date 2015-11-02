@@ -8,8 +8,10 @@
 ?>
 <html>
     <head>
+        <link rel="stylesheet" href="css/style.css">
     </head>
     <body>
-        <f
+        <div id="nav"></div>
+        <div id="main"></div>
     </body>
 </html>
