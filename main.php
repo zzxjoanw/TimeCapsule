@@ -16,6 +16,10 @@
         <link rel="stylesheet" href="css/style.css">
 
         <script language="JavaScript">
+            $(document).ready(function(){
+                $("#login-open").hide();
+            });
+
             $("login").click(function() {
                 $("login-open").toggle();
             });
@@ -29,7 +33,7 @@
                 {
                     ?>
                         <div id="login" class="nav-bttn">login</div>
-                        <div id="login-open" class="nav-open">
+                        <div id="login-open" class="nav-bttn">
                             <form>
                                 <input type="text" name="username" value="">
                                 <input type="password" name="password" value="">
