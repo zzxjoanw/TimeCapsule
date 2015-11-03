@@ -18,10 +18,18 @@
         <script language="JavaScript">
             $(document).ready(function(){
                 $("#login-open").hide();
-            });
+                $("#register-open").hide();
 
-            $("login").click(function() {
-                $("login-open").toggle();
+                $("#login span").click(function() {
+                    $("#login-open").toggle();
+                    var isLoginShown = $("#login-open").is(":visible");
+
+                });
+
+                $("#register span").click(function() {
+                    $("#register-open").toggle();
+                    var isRegShown = $("#register-open").is(":visible");
+                });
             });
         </script>
     </head>
@@ -32,15 +40,31 @@
                 if(!isset($_SESSION))
                 {
                     ?>
-                        <div id="login" class="nav-bttn">login</div>
-                        <div id="login-open" class="nav-bttn">
-                            <form>
-                                <input type="text" name="username" value="">
-                                <input type="password" name="password" value="">
-                                <input type="submit" name="submit" value="submit">
-                            </form>
+                        <div id="login">
+                            <div id="login-open">
+                                <form>
+                                    <input type="text" class="form-control" placeholder="Username">
+                                    <input type="password" class="form-control" placeholder="Password">
+                                    <button type="submit" class="btn btn-submit">Submit</button>
+                                </form>
+                            </div>
+                            <span>login</span>
                         </div>
-                        <div id="register" class="nav-bttn">register</div>
+                        <div id="register">
+                            <div id="register-open">
+                                <form>
+                                    <input type="text" class="form-control" placeholder="Username">
+                                    <input type="password" class="form-control" placeholder="Password">
+                                    <input type="email" class="form-control" placeholder="Email">
+                                    <select>
+                                        <option>Student</option>
+                                        <option>Parent</option>
+                                        <option>School</option>
+                                    </select>
+                                </form>
+                            </div>
+                            <span>register</span>
+                        </div>
                     <?
                 }
                 elseif($role == "student")
