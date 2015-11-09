@@ -6,6 +6,22 @@
  * Time: 8:48 PM
  */
 ?>
+
+<?php
+$servername = "localhost";
+$username = "username";
+$password = "password";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+echo "Connected successfully";
+?>
+
 <html>
     <head>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
@@ -23,73 +39,12 @@
                 $("#login span").click(function() {
                     $("#login-open").toggle();
                     var isLoginShown = $("#login-open").is(":visible");
-
-                });
-
-                $("#register span").click(function() {
-                    $("#register-open").toggle();
-                    var isRegShown = $("#register-open").is(":visible");
                 });
             });
         </script>
     </head>
     <body>
-        <div id="nav">
-            <div id="logo">logo</div>
-            <?
-                if(!isset($_SESSION))
-                {
-                    ?>
-                        <div id="login">
-                            <div id="login-open">
-                                <form>
-                                    <input type="text" class="form-control" placeholder="Username">
-                                    <input type="password" class="form-control" placeholder="Password">
-                                    <button type="submit" class="btn btn-submit">Submit</button>
-                                </form>
-                            </div>
-                            <span>login</span>
-                        </div>
-                        <div id="register">
-                            <div id="register-open">
-                                <form>
-                                    <input type="text" class="form-control" placeholder="Username">
-                                    <input type="password" class="form-control" placeholder="Password">
-                                    <input type="email" class="form-control" placeholder="Email">
-                                    <select>
-                                        <option>Student</option>
-                                        <option>Parent</option>
-                                        <option>School</option>
-                                    </select>
-                                </form>
-                            </div>
-                            <span>register</span>
-                        </div>
-                    <?
-                }
-                elseif($role == "student")
-                {
-                    ?>
-
-                    <?
-                }
-                elseif($role=="parent")
-                {
-                    ?>
-                    <?
-                }
-                elseif($role=="school")
-                {
-                    ?>
-                    <?
-                }
-                elseif($role=="admin")
-                {
-                    ?>
-                    <?
-                }
-            ?>
-        </div>
+        <? include("includes/nav.php"); ?>
         <div id="main"></div>
     </body>
 </html>
