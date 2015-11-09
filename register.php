@@ -7,7 +7,7 @@
  */
 ?>
 
-<?php
+<?php /*
 $servername = "localhost";
 $username = "username";
 $password = "password";
@@ -19,7 +19,7 @@ $conn = new mysqli($servername, $username, $password);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-echo "Connected successfully";
+echo "Connected successfully"; */
 ?>
 <html>
 <head>
@@ -53,6 +53,21 @@ echo "Connected successfully";
                 <option>Parent</option>
                 <option>School</option>
             </select>
+
+            <div id="student-section">
+                <select>
+                    <option>England</option>
+                    <option>Northern Ireland</option>
+                    <option>Scotland</option>
+                    <option>Wales</option>
+                </select>
+                <select>
+                    <option>Grammar</option>
+                    <option>Comprehensive</option>
+                    <option>Technical</option>
+                </select>
+                <label for="schoolname">School Name</label><input type="text" name="schoolname">
+            </div>
             <button class="btn btn-submit">Register</button>
         </form>
     </div>
