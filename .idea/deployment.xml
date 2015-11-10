@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="dcwebdev.net" uploadOnCheckin="e43c5396-f691-4728-bf64-f4924ddfd5c6">
+  <component name="PublishConfigData" serverName="dcwebdev.net" traceLevel="DETAILS" uploadOnCheckin="e43c5396-f691-4728-bf64-f4924ddfd5c6">
     <serverData>
       <paths name="dcwebdev.net">
         <serverdata>
           <mappings>
             <mapping deploy="/timecapsule" local="$PROJECT_DIR$" web="/" />
+            <mapping local="" />
           </mappings>
         </serverdata>
       </paths>

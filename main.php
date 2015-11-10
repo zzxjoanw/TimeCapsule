@@ -5,21 +5,10 @@
  * Date: 11/2/2015
  * Time: 8:48 PM
  */
-?>
 
-<?php /*
-$servername = "localhost";
-$username = "username";
-$password = "password";
+include("includes/db-functions.php");
 
-// Create connection
-$conn = new mysqli($servername, $username, $password);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-echo "Connected successfully";*/
+connect();
 ?>
 
 <html>

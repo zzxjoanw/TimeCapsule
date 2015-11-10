@@ -5,21 +5,44 @@
  * Date: 11/2/2015
  * Time: 8:48 PM
  */
+
+include("includes/db-functions.php");
+connect();
 ?>
 
-<?php /*
-$servername = "localhost";
-$username = "username";
-$password = "password";
+<?
+    $firstName = $_POST['firstName'] || "";
+    $firstName = $_POST['lastName'] || "";
+    function isValid()
+    {
+        $flag = 1;
+        if(!isset($_POST['firstName']) || ($_POST['firstName'] == ""))
+        {
+            $flag = 0;
+        }
 
-// Create connection
-$conn = new mysqli($servername, $username, $password);
+        if(!isset($_POST['lastName']) || ($_POST['lastName'] == ""))
+        {
+            $flag = 0;
+        }
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-echo "Connected successfully"; */
+        if(!isset($_POST['password']) || ($_POST['password'] == ""))
+        {
+            $flag = 0;
+        }
+
+        if(!isset($_POST['role']) || ($_POST['role'] == ""))
+        {
+            $flag = 0;
+        }
+
+        if(!isset($_POST['schoolname']) || ($_POST['schoolname'] == ""))
+        {
+            $flag = 0;
+        }
+
+        return $flag;
+    }
 ?>
 <html>
 <head>
@@ -44,32 +67,47 @@ echo "Connected successfully"; */
 </head>
 <body>
     <? include("includes/nav.php"); ?>
-    <div id="main">
-        <form class="">
-            <label for="username">Name</label><input type="text" name="username" id="username">
-            <label for="password">Password</label><input type="password" name="password" id="password">
-            <select>
-                <option>Student</option>
-                <option>Parent</option>
-                <option>School</option>
-            </select>
-
-            <div id="student-section">
-                <select>
+    <? if(isValid() == 0) ?>
+        <div id="main">
+            <form class="" action="register.php" method="post">
+                <div> class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" name="firstName" id="firstName" value="<? echo $firstName ?>">
+                </div>
+                <div> class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" name="lastName" id="lastName" value="<? echo $lastName ?>">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label><input type="password" name="password" id="password">
+                </div>
+                <select class="form-control" name="role" id="role">
+                    <option>Student</option>
+                    <option>Parent</option>
+                    <option>School</option>
+                </select>
+                <select class="form-control" name="country" id="country">
                     <option>England</option>
                     <option>Northern Ireland</option>
                     <option>Scotland</option>
                     <option>Wales</option>
                 </select>
-                <select>
-                    <option>Grammar</option>
-                    <option>Comprehensive</option>
-                    <option>Technical</option>
-                </select>
-                <label for="schoolname">School Name</label><input type="text" name="schoolname">
-            </div>
-            <button class="btn btn-submit">Register</button>
-        </form>
-    </div>
+                <div class="form-group">
+                    <label for="schoolname">School Name</label><input type="text" name="schoolname">
+                </div>
+                <button class="btn btn-submit">Register</button>
+            </form>
+        </div>
+    <? else
+        {
+            $firstName = htmlspecialchars($_POST['firstName']);
+            $lastName = htmlspecialchars($_POST['lastName']);
+            $email = htmlspecialchars($_POST['email']);
+            $password = htmlspecialchars($_POST['password']);
+            doQuery("INSERT INTO studentTable (`firstname`,`lastname`,`email`,'password') VALUES($firstName,$lastName,$email,$password)");
+        }
+    ?>
+
+
 </body>
 </html>
