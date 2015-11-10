@@ -8,7 +8,7 @@
 
 function connect()
 {
-    $servername = "server157.web-hosting.com:21098";
+    $servername = "dcwebdev.net";
     $username = "dcwecddg_TimeCap";
     $password = "F&#wsAZp_Lap";
 
