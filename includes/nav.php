@@ -6,7 +6,7 @@
         ?>
         <div id="login">
             <div id="login-open">
-                <form>
+                <form action="nav.php" method="post">
                     <input type="text" class="form-control" placeholder="Username">
                     <input type="password" class="form-control" placeholder="Password">
                     <button type="submit" class="btn btn-submit">Submit</button>

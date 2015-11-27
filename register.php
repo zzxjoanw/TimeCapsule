@@ -7,7 +7,7 @@
  */
 
 include("includes/db-functions.php");
-connect();
+doConnect();
 ?>
 
 <?
@@ -98,16 +98,15 @@ connect();
                 <button class="btn btn-submit">Register</button>
             </form>
         </div>
-    <? else
+    <?
+        else
         {
             $firstName = htmlspecialchars($_POST['firstName']);
             $lastName = htmlspecialchars($_POST['lastName']);
             $email = htmlspecialchars($_POST['email']);
             $password = htmlspecialchars($_POST['password']);
-            doQuery("INSERT INTO studentTable (`firstname`,`lastname`,`email`,'password') VALUES($firstName,$lastName,$email,$password)");
+            doQuery("INSERT INTO studentTable (`firstname`,`lastname`,`email`,'password') VALUES($firstName,$lastName,$email,$password)", $mysqli);
         }
     ?>
-
-
 </body>
 </html>

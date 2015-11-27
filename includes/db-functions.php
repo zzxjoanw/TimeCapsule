@@ -6,24 +6,45 @@
  * Time: 9:24 PM
  */
 
-function connect()
+function doConnect()
 {
-    $servername = "dcwebdev.net";
+    $host = "";
     $username = "dcwecddg_TimeCap";
     $password = "F&#wsAZp_Lap";
+    $correctFingerprint = "";
 
-    // Create connection
-    $conn = new mysqli($servername, $username, $password);
-
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
+    $connection = ssh2_connect();
+    if(!$connection)
+    {
+        die("Connection failed");
     }
-    echo "Connected successfully";
+    else
+    {
+        $fingerprint = ssh2_fingerprint($connection);
+        if($fingerprint != $correctFingerprint)
+        {
+            die("hostkey mismatch");
+        }
+
+        $auth = ssh2_auth_password($connection,$username,$password);
+        if(!$auth)
+        {
+            die("authentication failed");
+        }
+
+        return $connection;
+    }
 }
 
-function doQuery($SQL)
+function doQuery($SQL, $connection)
 {
+    $result = ssh2_exec($connection,$SQL);
 
+    if(!result)
+    {
+        die("query failed");
+    }
+
+    return $result;
 }
 ?>

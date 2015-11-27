@@ -8,6 +8,6 @@
 
 include("includes/db-functions.php");
 
-$mysqli = doConnect();
+$connection = doConnect();
 $sql = "INSERT INTO studentTable (firstname,lastname,email,password) VALUES('Laura','Mayer-Sommer','zzxjoanw@gmail.com','test')";
-doQuery($sql,$mysqli);
+doQuery($sql,$connection);
