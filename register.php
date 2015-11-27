@@ -67,7 +67,7 @@ doConnect();
 </head>
 <body>
     <? include("includes/nav.php"); ?>
-    <? if(isValid() == 0) ?>
+    <? if(isValid() == 0) { ?>
         <div id="main">
             <form class="" action="register.php" method="post">
                 <div> class="form-group">
@@ -98,7 +98,7 @@ doConnect();
                 <button class="btn btn-submit">Register</button>
             </form>
         </div>
-    <?
+    <? }
         else
         {
             $firstName = htmlspecialchars($_POST['firstName']);
