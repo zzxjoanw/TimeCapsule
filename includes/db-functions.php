@@ -10,8 +10,6 @@ function doConnect()
 {
     //these are overwritten in auth-info.php
     $host = "";
-    $correctFingerprint = "";
-    $port = 0;
     $username = "";
     $password = "";
     $database = "";
@@ -55,8 +53,8 @@ function doConnect()
 
 function insertStudent($sql, $connection, $firstname, $lastname, $email, $password)
 {
-    $preparedStatement = mysqli_prepare($connection,$sql);
-    $preparedStatement->bind_param("ssss",$firstname,$lastname,$email,$password);
+    $preparedStatement = mysqli_prepare($connection,$sql) or die("error1");
+    $preparedStatement->bind_param("ssss",$firstname,$lastname,$email,$password) or die("error2");
     $result = mysqli_stmt_exec($preparedStatement);
 }
 
