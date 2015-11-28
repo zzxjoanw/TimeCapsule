@@ -52,26 +52,18 @@ function doConnect()
     }*/
 }
 
+/**
+ * @param $sql
+ * @param $connection
+ * @param $firstname
+ * @param $lastname
+ * @param $email
+ * @param $password
+ */
 function insertStudent($sql, $connection, $firstname, $lastname, $email, $password)
 {
-    echo $sql;
     $preparedStatement = mysqli_prepare($connection,$sql) or die("error: ".$preparedStatement->error());
     $preparedStatement->bind_param("ssss",$firstname,$lastname,$email,$password) or die("error: ".$preparedStatement->error());
     $result = mysqli_stmt_execute($preparedStatement);
-}
-
-function doQuery($sql, $connection)
-{
-
-
-    /*
-    $result = ssh2_exec($connection,$SQL);
-
-    if(!$result)
-    {
-        die("query failed");
-    }
-
-    return $result;*/
 }
 ?>

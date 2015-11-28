@@ -6,11 +6,8 @@
  * Time: 8:48 PM
  */
 
-include("includes/db-functions.php");
-doConnect();
-?>
+    include("includes/db-functions.php");
 
-<?
     $firstName = $_POST['firstName'] || "";
     $firstName = $_POST['lastName'] || "";
     function isValid()
@@ -70,22 +67,27 @@ doConnect();
     <? if(isValid() == 0) { ?>
         <div id="main">
             <form class="" action="register.php" method="post">
-                <div> class="form-group">
+                <div class="form-group">
                     <label for="firstName">First Name</label>
                     <input type="text" name="firstName" id="firstName" value="<? echo $firstName ?>">
                 </div>
-                <div> class="form-group">
+                <div class="form-group">
                     <label for="lastName">Last Name</label>
                     <input type="text" name="lastName" id="lastName" value="<? echo $lastName ?>">
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label><input type="password" name="password" id="password">
                 </div>
+                <div class="form-group">
+                    <label for="email">Email</label><input type="text" name="email" id="email">
+                </div>
+                <label for="role">Role</label>
                 <select class="form-control" name="role" id="role">
                     <option>Student</option>
                     <option>Parent</option>
                     <option>School</option>
                 </select>
+                <label for="country">Country</label>
                 <select class="form-control" name="country" id="country">
                     <option>England</option>
                     <option>Northern Ireland</option>
@@ -93,7 +95,8 @@ doConnect();
                     <option>Wales</option>
                 </select>
                 <div class="form-group">
-                    <label for="schoolname">School Name</label><input type="text" name="schoolname">
+                    <label for="schoolname">School Name</label>
+                    <input type="text" name="schoolname" id="schoolname">
                 </div>
                 <button class="btn btn-submit">Register</button>
             </form>
@@ -101,10 +104,11 @@ doConnect();
     <? }
         else
         {
-            $firstName = htmlspecialchars($_POST['firstName']);
-            $lastName = htmlspecialchars($_POST['lastName']);
+            $firstname = htmlspecialchars($_POST['firstName']);
+            $lastname = htmlspecialchars($_POST['lastName']);
             $email = htmlspecialchars($_POST['email']);
             $password = htmlspecialchars($_POST['password']);
+            $school = htmlspecialchars($_POST['school']);
 
             $connection = doConnect();
 
