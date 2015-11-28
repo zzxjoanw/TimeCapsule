@@ -9,10 +9,11 @@
 include("includes/db-functions.php");
 
 $connection = doConnect();
+
 $firstname = "Laura";
 $lastname = "Mayer-Sommer";
 $email = "zzxjoanw@gmail.com";
 $password = "test";
 
-$sql = "INSERT INTO tblStudents VALUES(?,?,?,?)";
+$sql = "INSERT INTO studentTable(firstname,lastname,email,password) VALUES(?,?,?,?)";
 insertStudent($sql,$connection,$firstname,$lastname,$email,$password);

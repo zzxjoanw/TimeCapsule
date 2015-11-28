@@ -105,7 +105,11 @@ doConnect();
             $lastName = htmlspecialchars($_POST['lastName']);
             $email = htmlspecialchars($_POST['email']);
             $password = htmlspecialchars($_POST['password']);
-            doQuery("INSERT INTO studentTable (`firstname`,`lastname`,`email`,'password') VALUES($firstName,$lastName,$email,$password)", $mysqli);
+
+            $connection = doConnect();
+
+            $sql = "INSERT INTO studentTable(firstname,lastname,email,password) VALUES(?,?,?,?)";
+            insertStudent($sql,$connection,$firstname,$lastname,$email,$password);
         }
     ?>
 </body>

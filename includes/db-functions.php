@@ -24,6 +24,7 @@ function doConnect()
     }
     else
     {
+        echo "connection successful";
         return $connection;
     }
 
@@ -53,9 +54,10 @@ function doConnect()
 
 function insertStudent($sql, $connection, $firstname, $lastname, $email, $password)
 {
-    $preparedStatement = mysqli_prepare($connection,$sql) or die("error1");
-    $preparedStatement->bind_param("ssss",$firstname,$lastname,$email,$password) or die("error2");
-    $result = mysqli_stmt_exec($preparedStatement);
+    echo $sql;
+    $preparedStatement = mysqli_prepare($connection,$sql) or die("error: ".$preparedStatement->error());
+    $preparedStatement->bind_param("ssss",$firstname,$lastname,$email,$password) or die("error: ".$preparedStatement->error());
+    $result = mysqli_stmt_execute($preparedStatement);
 }
 
 function doQuery($sql, $connection)
