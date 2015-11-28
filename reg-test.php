@@ -13,4 +13,6 @@ $firstname = "Laura";
 $lastname = "Mayer-Sommer";
 $email = "zzxjoanw@gmail.com";
 $password = "test";
+
+$sql = "INSERT INTO tblStudents VALUES(?,?,?,?)";
 insertStudent($sql,$connection,$firstname,$lastname,$email,$password);
