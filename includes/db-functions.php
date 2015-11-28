@@ -18,7 +18,9 @@ function doConnect()
 
     include("auth-info.php");
 
-    if(!$connection = mysqli_connect($host,$username,$password,$database));
+    $connection = mysqli_connect($host,$username,$password,$database);
+
+    if(!$connection)
     {
         die("connection failed: " . mysqli_connect_error());
     }
