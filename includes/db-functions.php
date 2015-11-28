@@ -10,10 +10,11 @@ function doConnect()
 {
     $host = "";
     $correctFingerprint = "";
+    $port = 0;
 
     include("includes/auth-info.php");
 
-    $connection = ssh2_connect($host);
+    $connection = ssh2_connect($host,$port);
     if(!$connection)
     {
         die("Connection failed");
