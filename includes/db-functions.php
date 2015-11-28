@@ -8,10 +8,10 @@
 
 function doConnect()
 {
-    $username = "dcwecddg_TimeCap";
-    $password = "F&#wsAZp_Lap";
-    $host = "server157.web-hosting.com:21098";
+    $host = "";
     $correctFingerprint = "";
+
+    include("includes/auth-info.php");
 
     $connection = ssh2_connect($host);
     if(!$connection)
