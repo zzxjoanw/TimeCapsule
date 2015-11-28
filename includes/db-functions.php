@@ -16,13 +16,16 @@ function doConnect()
     $password = "";
     $database = "";
 
-    include("includes/auth-info.php");
+    include("auth-info.php");
 
     if(!$connection = mysqli_connect($host,$username,$password,$database));
     {
-        die("connection failed");
+        die("connection failed: " . mysqli_connect_error());
     }
-    return $connection;
+    else
+    {
+        return $connection;
+    }
 
     /* don't need remote connection
     $connection = ssh2_connect($host,$port);
