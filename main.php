@@ -8,7 +8,7 @@
 
 include("includes/db-functions.php");
 
-connect();
+doConnect();
 ?>
 
 <html>
