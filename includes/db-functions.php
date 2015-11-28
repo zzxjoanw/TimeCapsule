@@ -8,12 +8,12 @@
 
 function doConnect()
 {
-    $host = "";
     $username = "dcwecddg_TimeCap";
     $password = "F&#wsAZp_Lap";
+    $host = "server157.web-hosting.com:21098";
     $correctFingerprint = "";
 
-    $connection = ssh2_connect();
+    $connection = ssh2_connect($host);
     if(!$connection)
     {
         die("Connection failed");
@@ -40,7 +40,7 @@ function doQuery($SQL, $connection)
 {
     $result = ssh2_exec($connection,$SQL);
 
-    if(!result)
+    if(!$result)
     {
         die("query failed");
     }
