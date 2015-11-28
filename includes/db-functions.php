@@ -8,12 +8,23 @@
 
 function doConnect()
 {
+    //these are overwritten in auth-info.php
     $host = "";
     $correctFingerprint = "";
     $port = 0;
+    $username = "";
+    $password = "";
+    $database = "";
 
     include("includes/auth-info.php");
 
+    if(!$connection = mysqli_connect($host,$username,$password,$database));
+    {
+        die("connection failed");
+    }
+    return $connection;
+
+    /* don't need remote connection
     $connection = ssh2_connect($host,$port);
     if(!$connection)
     {
@@ -34,11 +45,21 @@ function doConnect()
         }
 
         return $connection;
-    }
+    }*/
 }
 
-function doQuery($SQL, $connection)
+function insertStudent($sql, $connection, $firstname, $lastname, $email, $password)
 {
+    $preparedStatement = mysqli_prepare($connection,$sql);
+    $preparedStatement->bind_param("ssss",$firstname,$lastname,$email,$password);
+    $result = mysqli_stmt_exec($preparedStatement);
+}
+
+function doQuery($sql, $connection)
+{
+
+
+    /*
     $result = ssh2_exec($connection,$SQL);
 
     if(!$result)
@@ -46,6 +67,6 @@ function doQuery($SQL, $connection)
         die("query failed");
     }
 
-    return $result;
+    return $result;*/
 }
 ?>

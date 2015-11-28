@@ -9,5 +9,8 @@
 include("includes/db-functions.php");
 
 $connection = doConnect();
-$sql = "INSERT INTO studentTable (firstname,lastname,email,password) VALUES('Laura','Mayer-Sommer','zzxjoanw@gmail.com','test')";
-doQuery($sql,$connection);
+$firstname = "Laura";
+$lastname = "Mayer-Sommer";
+$email = "zzxjoanw@gmail.com";
+$password = "test";
+insertStudent($sql,$connection,$firstname,$lastname,$email,$password);
