@@ -6,7 +6,7 @@
  * Time: 9:24 PM
  */
 
-function doConnect()
+function openDBConnection()
 {
     //these are overwritten in auth-info.php
     $host = "";
@@ -16,54 +16,59 @@ function doConnect()
 
     include("auth-info.php");
 
-    $connection = mysqli_connect($host,$username,$password,$database);
+    $connection = new mysqli($host,$username,$password,$database) or die($connection->error);
 
-    if(!$connection)
-    {
-        die("connection failed: " . mysqli_connect_error());
-    }
-    else
-    {
-        echo "connection successful";
-        return $connection;
-    }
-
-    /* don't need remote connection
-    $connection = ssh2_connect($host,$port);
-    if(!$connection)
-    {
-        die("Connection failed");
-    }
-    else
-    {
-        $fingerprint = ssh2_fingerprint($connection);
-        if($fingerprint != $correctFingerprint)
-        {
-            die("hostkey mismatch");
-        }
-
-        $auth = ssh2_auth_password($connection,$username,$password);
-        if(!$auth)
-        {
-            die("authentication failed");
-        }
-
-        return $connection;
-    }*/
+    return $connection;
 }
 
-/**
- * @param $sql
- * @param $connection
- * @param $firstname
- * @param $lastname
- * @param $email
- * @param $password
- */
+function closeDBConnection($connection)
+{
+    $connection->close();
+}
+
+function closeQuery($preparedStatement)
+{
+    $preparedStatement->close();
+}
+
+function getSchoolList($connection,$country)
+{
+    //gets the names and ids of all schools in a given country. these will be displayed in a dropdown list
+    $sql = "SELECT schoolID,name FROM schoolTable WHERE country = ?";
+    $preparedStatement = $connection->prepare($sql) or die("error: ".$connection->error);
+    $preparedStatement->bind_param("s",$country) or die("error39");
+    $preparedStatement->execute();
+    $preparedStatement->bind_result($id, $name);
+
+    if($country == "Northern Ireland")
+    {
+        $country = "NorthernIreland";
+    }
+
+    $idString = "schools".$country;
+    $output = "<select class='form-control schools' name='schools' id='" . $idString . "'>";
+    while ($preparedStatement->fetch())
+    {
+        $output .= "<option value='" . $id . "'>" . $name . "</option>";
+    }
+    $output .= "</select>";
+    return $output;
+}
+
+function getGCSEList()
+{
+
+}
+
+function getMyGCSEs()
+{
+
+}
+
 function insertStudent($sql, $connection, $firstname, $lastname, $email, $password)
 {
-    $preparedStatement = mysqli_prepare($connection,$sql) or die("error: ".$preparedStatement->error());
+    $preparedStatement = $connection->prepare($sql) or die("error: ".$preparedStatement->error());
     $preparedStatement->bind_param("ssss",$firstname,$lastname,$email,$password) or die("error: ".$preparedStatement->error());
-    $result = mysqli_stmt_execute($preparedStatement);
+    $result = $preparedStatement->execute();
 }
 ?>

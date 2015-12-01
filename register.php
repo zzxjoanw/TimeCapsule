@@ -7,6 +7,11 @@
  */
 
     include("includes/db-functions.php");
+    $connection = openDBConnection();
+    $schoolNamesListEngland = getSchoolList($connection, "England");
+    $schoolNamesListNI = getSchoolList($connection, "Northern Ireland");
+    $schoolNamesListScotland = getSchoolList($connection, "Scotland");
+    $schoolNamesListWales = getSchoolList($connection, "Wales");
 
     $firstName = $_POST['firstName'] || "";
     $firstName = $_POST['lastName'] || "";
@@ -51,14 +56,28 @@
     <link rel="stylesheet" href="css/style.css">
 
     <script language="JavaScript">
-        $(document).ready(function(){
+        $(document).ready(function() {
             $("#login-open").hide();
             $("#register-open").hide();
 
-            $("#login span").click(function() {
+            $("#login span").click(function () {
                 $("#login-open").toggle();
                 var isLoginShown = $("#login-open").is(":visible");
             });
+
+            //show only the school dropdown for the selected country
+            schoolDropdownHandler(); //onload
+            $("#country").change(function(){
+                schoolDropdownHandler();
+            });
+
+            function schoolDropdownHandler() {
+                country = $('#country').val();
+                idString = "#schools" + country;
+                alert(idString);
+                $('.schools').hide();
+                $(idString).show();
+            }
         });
     </script>
 </head>
@@ -83,20 +102,24 @@
                 </div>
                 <label for="role">Role</label>
                 <select class="form-control" name="role" id="role">
-                    <option>Student</option>
-                    <option>Parent</option>
-                    <option>School</option>
+                    <option value="student">Student</option>
+                    <option value="parent">Parent</option>
+                    <option value="school">School</option>
                 </select>
                 <label for="country">Country</label>
                 <select class="form-control" name="country" id="country">
-                    <option>England</option>
-                    <option>Northern Ireland</option>
-                    <option>Scotland</option>
-                    <option>Wales</option>
+                    <option value="England">England</option>
+                    <option value="NorthernIreland">Northern Ireland</option>
+                    <option value="Scotland">Scotland</option>
+                    <option value="Wales">Wales</option>
                 </select>
                 <div class="form-group">
-                    <label for="schoolname">School Name</label>
-                    <input type="text" name="schoolname" id="schoolname">
+                    <?
+                        echo $schoolNamesListEngland;
+                        echo $schoolNamesListNI;
+                        echo $schoolNamesListScotland;
+                        echo $schoolNamesListWales;
+                    ?>
                 </div>
                 <button class="btn btn-submit">Register</button>
             </form>
@@ -110,11 +133,10 @@
             $password = htmlspecialchars($_POST['password']);
             $school = htmlspecialchars($_POST['school']);
 
-            $connection = doConnect();
-
             $sql = "INSERT INTO studentTable(firstname,lastname,email,password) VALUES(?,?,?,?)";
             insertStudent($sql,$connection,$firstname,$lastname,$email,$password);
         }
+        $connection->close();
     ?>
 </body>
 </html>
