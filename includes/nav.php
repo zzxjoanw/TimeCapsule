@@ -6,10 +6,10 @@
         ?>
         <div id="login">
             <div id="login-open">
-                <form action="nav.php" method="post">
-                    <input type="text" class="form-control" placeholder="Username">
-                    <input type="password" class="form-control" placeholder="Password">
-                    <button type="submit" class="btn btn-submit">Submit</button>
+                <form action="main.php" method="post">
+                    <input type="text" class="form-control" name="username" placeholder="Username">
+                    <input type="password" class="form-control" name="password" placeholder="Password">
+                    <button type="submit" class="btn btn-submit" name=""bttnLogin">Submit</button>
                 </form>
             </div>
             <span>login</span>
