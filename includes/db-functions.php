@@ -7,20 +7,6 @@
  */
 
 include("user-functions.php");
-//split into seperate files
-
-class adult extends user
-{
-    function getAssociatedStudents()
-    {
-
-    }
-}
-
-class school extends user
-{
-
-}
 
 function openDBConnection()
 {
