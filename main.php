@@ -8,7 +8,17 @@
 
 include("includes/db-functions.php");
 
-openDBConnection();
+$connection = openDBConnection();
+
+if(isset($_POST['bttnLogin']))
+{
+    $user = doLogin($connection,$_POST['username'],$_POST['password']);
+    if($user != false)  //if a user object was returned
+    {
+        session_start();
+        echo "hello " . $user.getFirstname();
+    }
+}
 ?>
 
 <html>
