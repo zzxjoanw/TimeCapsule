@@ -6,6 +6,35 @@
  * Time: 9:24 PM
  */
 
+include("user-functions.php");
+//split into seperate files
+class student extends user
+{
+
+    function getInterests()
+    {
+
+    }
+
+    function getGCSEs()
+    {
+
+    }
+}
+
+class adult extends user
+{
+    function getAssociatedStudents()
+    {
+
+    }
+}
+
+class school extends user
+{
+
+}
+
 function openDBConnection()
 {
     //these are overwritten in auth-info.php
@@ -31,6 +60,49 @@ function closeQuery($preparedStatement)
     $preparedStatement->close();
 }
 
+/*
+function sendSelectQuery($connection,$table,$parameters, $types, $values, $result)
+{
+    $where = "";
+    for($i=0; i<$parameters->length; $i++)
+    {
+        $where .= $parameters[i] . "=" . $values[i];
+
+        if($i != $parameters->length-1)
+        {
+            $where .= "AND ";
+        }
+    }
+    $where .= ";";
+    $sql = "SELECT * FROM " . $table . " WHERE " . $where;
+    call_user_func_array("bind_param",array($parameters));
+    $preparedStatement->bind_param($types,
+    $preparedStatement->execute();
+}
+*/
+
+function doLogin($connection, $username,$password)
+{
+    $sql = "SELECT * FROM studentTable WHERE username = ? AND password = ?";
+    $preparedStatement = $connection->prepare($sql) or die("error: " . $connection->error);
+    $preparedStatement->bind_param("ss",$username,$password) or die("error in doLogin()");
+    $preparedStatement->execute();
+    $preparedStatement->bind_result($username,$firstname,$lastname,$country);
+
+    while($preparedStatement->fetch())
+    {
+        if($preparedStatement->num_rows() == 1)
+        {
+            $user = new user($firstname,$lastname,$country);
+            return $user;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
 function getSchoolList($connection,$country)
 {
     //gets the names and ids of all schools in a given country. these will be displayed in a dropdown list
@@ -41,6 +113,7 @@ function getSchoolList($connection,$country)
     $preparedStatement->bind_result($id, $name);
 
     if($country == "Northern Ireland")
+    //the value of country is used as an id in the reg form. it needs to be one word.
     {
         $country = "NorthernIreland";
     }
@@ -55,14 +128,21 @@ function getSchoolList($connection,$country)
     return $output;
 }
 
-function getGCSEList()
+function getGCSEList($connection,$country)
 {
+    $sql = "SELECT * FROM gcseTable WHERE country = ?";
+    $preparedStatement = $connection->prepare($sql) or die("error: ".$connection->error);
+    $preparedStatement->bind_param("s",$country) or die("getGCSEList bindparam error");
+    $preparedStatement->execute();
+    $preparedStatement->bind_result($name, $id);
 
-}
+    $output = "";
+    while($preparedStatement->fetch())
+    {
+        $output .= "<input type='checkbox' name='' value='".  $id."'>" . $name . "<br/>";
+    }
 
-function getMyGCSEs()
-{
-
+    return $output;
 }
 
 function insertStudent($sql, $connection, $firstname, $lastname, $email, $password)
