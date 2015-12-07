@@ -8,19 +8,6 @@
 
 include("user-functions.php");
 //split into seperate files
-class student extends user
-{
-
-    function getInterests()
-    {
-
-    }
-
-    function getGCSEs()
-    {
-
-    }
-}
 
 class adult extends user
 {
@@ -83,7 +70,7 @@ function sendSelectQuery($connection,$table,$parameters, $types, $values, $resul
 
 function doLogin($connection, $username,$password)
 {
-    $sql = "SELECT * FROM studentTable WHERE username = ? AND password = ?";
+    $sql = "SELECT * FROM studentTable WHERE username = ? AND password = ?"; //check column names
     $preparedStatement = $connection->prepare($sql) or die("error: " . $connection->error);
     $preparedStatement->bind_param("ss",$username,$password) or die("error in doLogin()");
     $preparedStatement->execute();
