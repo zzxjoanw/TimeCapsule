@@ -7,16 +7,30 @@
  */
 
 include("includes/db-functions.php");
+include("includes/user-functions.php");
 
 $connection = openDBConnection();
 
+if(isset($_SESSION['firstname']))
+{
+    echo "already logged in";
+}
+
 if(isset($_POST['bttnLogin']))
 {
-    $user = doLogin($connection,$_POST['username'],$_POST['password']);
-    if($user != false)  //if a user object was returned
+    $user = doLogin($connection,$_POST['email'],$_POST['password']);
+
+    if($user != false)
     {
         session_start();
-        echo "hello " . $user.getFirstname();
+        $_SESSION['firstname'] = $user[0];
+        $_SESSION['lastname'] = $user[1];
+        $_SESSION['country'] = $user[2];
+        echo "logged in. welcome ".$_SESSION['firstname'] . " " . $_SESSION['lastname'];
+    }
+    else
+    {
+        echo "login failed";
     }
 }
 ?>
