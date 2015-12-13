@@ -6,8 +6,6 @@
  * Time: 9:24 PM
  */
 
-include("user-functions.php");
-
 function openDBConnection()
 {
     //these are overwritten in auth-info.php
@@ -33,47 +31,36 @@ function closeQuery($preparedStatement)
     $preparedStatement->close();
 }
 
-/*
-function sendSelectQuery($connection,$table,$parameters, $types, $values, $result)
+function doLogin($connection, $email,$password)
 {
-    $where = "";
-    for($i=0; i<$parameters->length; $i++)
-    {
-        $where .= $parameters[i] . "=" . $values[i];
-
-        if($i != $parameters->length-1)
-        {
-            $where .= "AND ";
-        }
-    }
-    $where .= ";";
-    $sql = "SELECT * FROM " . $table . " WHERE " . $where;
-    call_user_func_array("bind_param",array($parameters));
-    $preparedStatement->bind_param($types,
-    $preparedStatement->execute();
-}
-*/
-
-function doLogin($connection, $username,$password)
-{
-    $sql = "SELECT * FROM studentTable WHERE username = ? AND password = ?"; //check column names
+    $sql = "SELECT firstname,lastname,country FROM studentTable WHERE email = ? AND password = ?"; //check column names
     $preparedStatement = $connection->prepare($sql) or die("error: " . $connection->error);
-    $preparedStatement->bind_param("ss",$username,$password) or die("error in doLogin()");
+    $preparedStatement->bind_param("ss",$email,$password) or die("error in doLogin()");
     $preparedStatement->execute();
-    $preparedStatement->bind_result($username,$firstname,$lastname,$country);
+    $preparedStatement->store_result();
+    $preparedStatement->bind_result($firstname,$lastname,$country);
 
-    while($preparedStatement->fetch())
+    $list = array();
+
+    if($preparedStatement->num_rows() == 1)
     {
-        if($preparedStatement->num_rows() == 1)
+        while($preparedStatement->fetch())
         {
-            $user = new user($firstname,$lastname,$country);
-            return $user;
+            array_push($list,$firstname);
+            array_push($list,$lastname);
+            array_push($list,$country);
         }
-        else
-        {
-            return false;
-        }
+        return $list;
     }
+    return false;
+}
+
+function logout()
+{
+    unset($_SESSION['firstname']);
+    unset($_SESSION['lastname']);
+    unset($_SESSION['country']);
+    session_destroy();
 }
 
 function getSchoolList($connection,$country)
@@ -98,23 +85,6 @@ function getSchoolList($connection,$country)
         $output .= "<option value='" . $id . "'>" . $name . "</option>";
     }
     $output .= "</select>";
-    return $output;
-}
-
-function getGCSEList($connection,$country)
-{
-    $sql = "SELECT * FROM gcseTable WHERE country = ?";
-    $preparedStatement = $connection->prepare($sql) or die("error: ".$connection->error);
-    $preparedStatement->bind_param("s",$country) or die("getGCSEList bindparam error");
-    $preparedStatement->execute();
-    $preparedStatement->bind_result($name, $id);
-
-    $output = "";
-    while($preparedStatement->fetch())
-    {
-        $output .= "<input type='checkbox' name='' value='".  $id."'>" . $name . "<br/>";
-    }
-
     return $output;
 }
 
