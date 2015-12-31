@@ -6,70 +6,48 @@
  * Time: 2:16 PM
  */
 
-class user
+function getUserInfo($connection,$email)
 {
-    private $firstname = "";
-    private $lastname = "";
-    private $country = "";
+    $sql = "SELECT firstname,lastname,country FROM studentTable WHERE email = '" . $email . "'";
+    $preparedStatement = $connection->prepare($sql) or die("error: ".$connection->error);
+    $preparedStatement->bind_param("s",$email);
+    $preparedStatement->execute();
+    $preparedStatement->bind_result($firstname,$lastname,$country);
 
-    function  __constructor($firstname,$lastname,$country)
-    {
-        $this->firstname = $firstname;
-        $this->lastname = $lastname;
-        $this->country = $country;
-    }
+    return $preparedStatement->fetch_array(MYSQLI_NUM);
+}
 
-    /*
-     * moved to db-functions.php
-    public function login($connection, $username, $password, $role)
-    {
-        $table = $role . "Table";
-        $sql = "SELECT * FROM " . $table . "WHERE username = ? AND password = ?;";
-        $preparedStatement = $connection->prepare($sql);
-        $preparedStatement->bind_param("ss", $username, $password);
-        $preparedStatement->execute();
-        $preparedStatement->bind_result($fn,$ln,$country);
+function getGCSEList($connection,$country)
+{
+    $sql = "SELECT name FROM gcseTable WHERE country LIKE %?%"; //check table name
+    $preparedStatement = $connection->prepare($sql) or die("error: ".$connection->error);
+    $preparedStatement->bind_param("s",$country) or die("getGCSEList bindparam error");
+    $preparedStatement->execute();
+    $preparedStatement->bind_result($name);
 
-        while ($preparedStatement->fetch())
-        {
-            if($preparedStatement->num_rows == 1)
-            {
-                session_start();
-                $this->setFirstname($fn);
-                $this->setLastname($ln);
-                $this->setCountry($country);
-            }
-        }
-    }
-    */
+    return $preparedStatement->fetch_array(MYSQLI_NUM);
+}
 
-    public function getFirstname()
-    {
-        return $this->firstname;
-    }
+function getOtherInterests($connection)
+//gets all interests not associated with the current student
+{
+    $studentID = $_SESSION['studentID']; //can't have arrays in SQL statements
+    $sql = "SELECT name FROM interestsTable WHERE interestID NOT IN
+              SELECT * FROM studentInterestTable WHERE studentID = $studentID";
+    $preparedStatement = $connection->prepare($sql) or die("error: ".$connection->error);
+    $preparedStatement->execute();
+    $preparedStatement->bind_result($name);
 
-    public function setFirstname($firstname)
-    {
-        $this->firstname = $firstname;
-    }
+    return $preparedStatement->fetch_array(MYSQLI_NUM);
+}
 
-    public function getLastname()
-    {
-        return $this->lastname;
-    }
+function getMyInterests($connection)
+//gets all the current student's interests
+{
+    $sql = "SELECT * FROM studentInterestsTable WHERE studentID";
+    $preparedStatement = $connection->prepare($sql) or die("error: ".$connection->error);
+    $preparedStatement->execute();
+    $preparedStatement->bind_result($name);
 
-    public function setLastname($lastname)
-    {
-        $this->lastname = $lastname;
-    }
-
-    public function getCountry()
-    {
-        return $this->country;
-    }
-
-    public function setCountry($country)
-    {
-        $this->country = $country;
-    }
+    return $preparedStatement->fetch_array(MYSQLI_NUM);
 }
