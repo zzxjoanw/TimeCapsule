@@ -44,10 +44,10 @@ function getOtherInterests($connection)
 function getMyInterests($connection)
 //gets all the current student's interests
 {
-    $sql = "SELECT * FROM studentInterestsTable WHERE studentID";
+    $sql = "SELECT interestID FROM studentInterestsTable WHERE studentID";
     $preparedStatement = $connection->prepare($sql) or die("error: ".$connection->error);
     $preparedStatement->execute();
-    $preparedStatement->bind_result($name);
+    $preparedStatement->bind_result($interestID);
 
     return $preparedStatement->fetch_array(MYSQLI_NUM);
 }
