@@ -13,6 +13,7 @@ if(!isset($_SESSION['firstname']))
 }
 
 include("includes/db-functions.php");
+include("includes/user-functions.php");
 
 $connection = openDBConnection();
 ?>
