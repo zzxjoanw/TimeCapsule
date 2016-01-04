@@ -23,10 +23,10 @@ if(isset($_POST['bttnLogin']))
     if($user != false)
     {
         session_start();
-        $_SESSION['firstname'] = $user[0];
-        $_SESSION['lastname'] = $user[1];
-        $_SESSION['country'] = $user[2];
-        echo "logged in. welcome ".$_SESSION['firstname'] . " " . $_SESSION['lastname'];
+        $_SESSION['studentID'] = $user[0];
+        $_SESSION['firstname'] = $user[1];
+        $_SESSION['lastname'] = $user[2];
+        $_SESSION['country'] = $user[3];
     }
     else
     {
