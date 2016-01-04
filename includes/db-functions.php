@@ -33,12 +33,12 @@ function closeQuery($preparedStatement)
 
 function doLogin($connection, $email,$password)
 {
-    $sql = "SELECT firstname,lastname,country FROM studentTable WHERE email = ? AND password = ?"; //check column names
+    $sql = "SELECT studentID, firstname,lastname,country FROM studentTable WHERE email = ? AND password = ?"; //check column names
     $preparedStatement = $connection->prepare($sql) or die("error: " . $connection->error);
     $preparedStatement->bind_param("ss",$email,$password) or die("error in doLogin()");
     $preparedStatement->execute();
     $preparedStatement->store_result();
-    $preparedStatement->bind_result($firstname,$lastname,$country);
+    $preparedStatement->bind_result($studentID,$firstname,$lastname,$country);
 
     $list = array();
 
@@ -46,6 +46,7 @@ function doLogin($connection, $email,$password)
     {
         while($preparedStatement->fetch())
         {
+            array_push($list,$studentID);
             array_push($list,$firstname);
             array_push($list,$lastname);
             array_push($list,$country);
@@ -74,6 +75,7 @@ function getSchoolList($connection,$country)
 
     if($country == "Northern Ireland")
     //the value of country is used as an id in the reg form. it needs to be one word.
+    //the reg form will submit the country name to the db as one word now.
     {
         $country = "NorthernIreland";
     }

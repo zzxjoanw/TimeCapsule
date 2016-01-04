@@ -28,26 +28,40 @@ function getGCSEList($connection,$country)
     return $preparedStatement->fetch_array(MYSQLI_NUM);
 }
 
-function getOtherInterests($connection)
+function getOtherInterests($connection, $id)
 //gets all interests not associated with the current student
 {
-    $studentID = $_SESSION['studentID']; //can't have arrays in SQL statements
+    echo $id;
     $sql = "SELECT name FROM interestsTable WHERE interestID NOT IN
-              SELECT * FROM studentInterestTable WHERE studentID = $studentID";
+              SELECT * FROM studentInterestTable WHERE studentID = '" . $id . "'";
     $preparedStatement = $connection->prepare($sql) or die("error: ".$connection->error);
     $preparedStatement->execute();
     $preparedStatement->bind_result($name);
 
-    return $preparedStatement->fetch_array(MYSQLI_NUM);
+    $list = array();
+
+    while($preparedStatement->fetch())
+    {
+        array_push($list,$name);
+    }
+
+    return $list;
 }
 
-function getMyInterests($connection)
+function getMyInterests($connection, $id)
 //gets all the current student's interests
 {
-    $sql = "SELECT interestID FROM studentInterestsTable WHERE studentID";
-    $preparedStatement = $connection->prepare($sql) or die("error: ".$connection->error);
-    $preparedStatement->execute();
-    $preparedStatement->bind_result($interestID);
+    $sql = "SELECT interestID FROM studentInterestsTable WHERE studentID = '" . $id . "'";
+    $preparedStatement = $connection->prepare($sql) or die("error: " . $connection->error);
+    $preparedStatement->execute() or die("execution error");
+    $preparedStatement->bind_result($interestID) or die("result error");
 
-    return $preparedStatement->fetch_array(MYSQLI_NUM);
+    $list = array();
+
+    while ($preparedStatement->fetch())
+    {
+        array_push($list,$interestID);
+    }
+
+    return $list;
 }

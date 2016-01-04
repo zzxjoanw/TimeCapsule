@@ -42,8 +42,9 @@ $connection = openDBConnection();
 <body>
     <?
         include("includes/nav.php");
-        $myInterestList = getMyInterests($connection);
-        $otherInterestsList = getOtherInterests($connection);
+        $myInterestList = getMyInterests($connection, $_SESSION['studentID']);
+        $otherInterestsList = getOtherInterests($connection, $_SESSION['studentID']);
+        echo $_SESSION['studentID'];
     ?>
     <div id="main">
         <hr>
