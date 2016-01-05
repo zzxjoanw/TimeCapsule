@@ -19,13 +19,21 @@ function getUserInfo($connection,$email)
 
 function getGCSEList($connection,$country)
 {
-    $sql = "SELECT name FROM gcseTable WHERE country LIKE %?%"; //check table name
+    $initial = substr($country,0,1);
+    $sql = "SELECT gcseName FROM gcseTable WHERE gcseCountryList LIKE %" . $initial . "%"; //check table name
     $preparedStatement = $connection->prepare($sql) or die("error: ".$connection->error);
     $preparedStatement->bind_param("s",$country) or die("getGCSEList bindparam error");
     $preparedStatement->execute();
     $preparedStatement->bind_result($name);
 
-    return $preparedStatement->fetch_array(MYSQLI_NUM);
+    $list = array();
+
+    while($preparedStatement->fetch())
+    {
+        array_push($list,$name);
+    }
+
+    return $list;
 }
 
 function getOtherInterests($connection, $id)
