@@ -31,9 +31,8 @@ function getGCSEList($connection,$country)
 function getOtherInterests($connection, $id)
 //gets all interests not associated with the current student
 {
-    echo $id;
-    $sql = "SELECT name FROM interestsTable WHERE interestID NOT IN
-              SELECT * FROM studentInterestTable WHERE studentID = '" . $id . "'";
+    $sql = "SELECT interestName FROM interestTable WHERE interestID NOT IN " .
+           "(SELECT interestID FROM studentInterestsTable WHERE studentID = " . $id . ")";
     $preparedStatement = $connection->prepare($sql) or die("error: ".$connection->error);
     $preparedStatement->execute();
     $preparedStatement->bind_result($name);
