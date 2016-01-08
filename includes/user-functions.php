@@ -102,7 +102,26 @@ function getOtherInterests($connection, $id)
 function getMyInterests($connection, $id)
 //gets all the current student's interests
 {
-    $sql = "SELECT interestID FROM studentInterestsTable WHERE studentID = '" . $id . "'";
+    $sql = "SELECT i.interestName FROM interestTable i,studentInterestsTable s WHERE i.interestID = s.interestID
+            AND s.studentID = " . $_SESSION['studentID'];
+
+    $preparedStatement = $connection->prepare($sql) or die("error: " . $connection->error);
+    $preparedStatement->execute() or die("execution error");
+    $preparedStatement->bind_result($interestID) or die("result error");
+
+    $list = array();
+
+    while ($preparedStatement->fetch())
+    {
+        array_push($list,$interestID);
+    }
+
+    return $list;
+}
+
+function getAllInterests($connection)
+{
+    $sql = "SELECT interestName FROM interestTable";
     $preparedStatement = $connection->prepare($sql) or die("error: " . $connection->error);
     $preparedStatement->execute() or die("execution error");
     $preparedStatement->bind_result($interestID) or die("result error");
