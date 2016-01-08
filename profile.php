@@ -44,9 +44,7 @@ $connection = openDBConnection();
         include("includes/nav.php");
         $myInterestList = getMyInterests($connection, $_SESSION['studentID']);
         $otherInterestsList = getOtherInterests($connection, $_SESSION['studentID']);
-
-        var_dump($myInterestList);
-        var_dump($otherInterestsList);
+        $myGCSEList = getAllGCSEsList($connection,$_SESSION['country']);
     ?>
     <div id="main">
         <hr>
@@ -78,7 +76,7 @@ $connection = openDBConnection();
         GCSEs <br/>
         <?
             $country = $_SESSION['country'];
-            $gcseList = getGCSEList($connection,$country);
+            $gcseList = getAllGCSEsList($connection,$country);
         ?>
     </div>
 </body>

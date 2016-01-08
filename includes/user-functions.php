@@ -17,12 +17,21 @@ function getUserInfo($connection,$email)
     return $preparedStatement->fetch_array(MYSQLI_NUM);
 }
 
-function getGCSEList($connection,$country)
+function setUserInfo($connection,$list)
+{
+    //$list is a key-value array containing the columns to be updated for each user
+
+    $sql = "";
+    $preparedStatement = $connection->prepare($sql) or die("error: ".$connection->error);
+    //can I have multiple bind_param statements?
+    return $preparedStatement->execute();
+}
+
+function getAllGCSEsList($connection,$country)
 {
     $initial = substr($country,0,1);
-    $sql = "SELECT gcseName FROM gcseTable WHERE gcseCountryList LIKE %" . $initial . "%"; //check table name
+    $sql = "SELECT gcseName FROM gcseTable WHERE gcseCountryList LIKE '%" . $initial . "%'"; //check table name
     $preparedStatement = $connection->prepare($sql) or die("error: ".$connection->error);
-    $preparedStatement->bind_param("s",$country) or die("getGCSEList bindparam error");
     $preparedStatement->execute();
     $preparedStatement->bind_result($name);
 
@@ -34,6 +43,41 @@ function getGCSEList($connection,$country)
     }
 
     return $list;
+}
+
+function getMyGCSEsList($connection,$id)
+{
+
+}
+
+function addGCSEs($connection, $list)
+{
+
+}
+
+function removeGCSEs($connection, $list)
+{
+
+}
+
+function getAllALevels($connection,$country)
+{
+
+}
+
+function getMyALevels($connection, $id)
+{
+
+}
+
+function addALevels($connection,$list)
+{
+
+}
+
+function removeALevels($connection,$list)
+{
+
 }
 
 function getOtherInterests($connection, $id)
@@ -71,4 +115,14 @@ function getMyInterests($connection, $id)
     }
 
     return $list;
+}
+
+function addInterests($connection, $list)
+{
+    //loops thru numeric array of interest names, adding them to the studentInterestTable
+}
+
+function removeInterests($connection,$list)
+{
+
 }
