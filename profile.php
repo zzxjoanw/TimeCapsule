@@ -44,19 +44,19 @@ $connection = openDBConnection();
         include("includes/nav.php");
         $myInterestList = getMyInterests($connection, $_SESSION['studentID']);
         $otherInterestsList = getOtherInterests($connection, $_SESSION['studentID']);
-        $myGCSEList = getAllGCSEsList($connection,$_SESSION['country']);
+        $allGCSEList = getAllGCSEsList($connection,$_SESSION['country']);
     ?>
     <div id="main">
         <hr>
         Interests <br/>
-        <table>
+        <table border="1">
             <tr>
                 <td>
                     <form action="profile.php" method="post">
                     <?
                         for($i=0;$i<count($myInterestList);$i++)
                         {
-                            echo "<input type='checkbox' name='addList' value='<? $myInterestList[$i] ?>'>" . $myInterestList[$i];
+                            echo "<input type='checkbox' name='removeList' value='<? $myInterestList[$i] ?>'>" . $myInterestList[$i];
                         }
                     ?>
                     </form>
@@ -65,8 +65,7 @@ $connection = openDBConnection();
                     <?
                         for($i=0;$i<count($otherInterestsList);$i++)
                         {
-                            echo $otherInterestsList[$i];
-                            echo "<a href='#' style='float:right'>add</a><br/>";
+                            echo "<input type='checkbox' name='addList' value='<? $otherInterestsList[$i] ?>'>" . $otherInterestsList[$i];
                         }
                     ?>
                 </td>
