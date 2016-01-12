@@ -42,35 +42,67 @@ $connection = openDBConnection();
 <body>
     <?
         include("includes/nav.php");
-        $myInterestList = getMyInterests($connection, $_SESSION['studentID']);
+
+        if(isset($_POST['bttnSubmit']))
+        {
+            addInterests($connection,$_POST['addInterests']);
+            removeInterests($connection,$_POST['removeInterests']);
+        }
+
+        $myInterestsList = getMyInterests($connection, $_SESSION['studentID']);
         $otherInterestsList = getOtherInterests($connection, $_SESSION['studentID']);
+        $allInterestsList = getAllInterests($connection);
+
         $allGCSEList = getAllGCSEsList($connection,$_SESSION['country']);
     ?>
     <div id="main">
         <hr>
         Interests <br/>
-        <table border="1">
-            <tr>
-                <td>
-                    <form action="profile.php" method="post">
-                    <?
-                        for($i=0;$i<count($myInterestList);$i++)
-                        {
-                            echo "<input type='checkbox' name='removeList' value='<? $myInterestList[$i] ?>'>" . $myInterestList[$i];
-                        }
-                    ?>
-                    </form>
-                </td>
-                <td>
-                    <?
-                        for($i=0;$i<count($otherInterestsList);$i++)
-                        {
-                            echo "<input type='checkbox' name='addList' value='<? $otherInterestsList[$i] ?>'>" . $otherInterestsList[$i];
-                        }
-                    ?>
-                </td>
-            </tr>
-        </table>
+        <form action="profile.php" method="post" id="formShowInterests">
+            <table border="1">
+                <tr>
+                    <td>Name</td><td>Add</td><td>Remove</td>
+                </tr>
+                <?
+                    for($i=0; $i<count($allInterestsList);$i++)
+                    {
+                        $values = explode("|",$allInterestsList[$i]);
+                        $id = $values[0];
+                        $name = $values[1];
+                        ?>
+                            <tr>
+                                <td><? echo $name . ", " . $id ?></td>
+                                <?
+                                    //array_search returns an index, or 0 if item not found :/
+                                    $aSearch = array_search($id,$otherInterestsList);
+                                    if(($aSearch)||(gettype($aSearch)=="integer"))
+                                    {
+                                        echo "<td>";
+                                        echo "<div class='cboxWrapper'>";
+                                        echo "<input type='checkbox' class='cbox cboxAddInterests' name='addInterests[]' value='".$id."' id='a".$id."'>";
+                                        echo "<label for='a" . $id . "'></label>";
+                                        echo "</div>";
+                                        echo "</td><td></td>";
+                                    }
+
+                                    $rSearch = array_search($id,$myInterestsList);
+                                    if(($rSearch)||(gettype($rSearch)=="integer"))
+                                    {
+                                        echo "<td></td>";
+                                        echo "<td><div class='cboxWrapper'>";
+                                        echo "<input type='checkbox' class='cbox cboxRemoveInterests' name='removeInterests[]' value='".$id."' id='r".$id."'>";
+                                        echo "<label for='r" . $id . "'></label>";
+                                        echo "</div>";
+                                        echo "</td>";
+                                    }
+                                ?>
+                            </tr>
+                         <?
+                    }
+                ?>
+            </table>
+            <button class="btn btn-submit" name="bttnSubmit">Add/Remove Interests</button>
+        </form>
         <hr>
         GCSEs <br/>
         <?

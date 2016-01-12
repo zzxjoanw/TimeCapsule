@@ -8,7 +8,7 @@
 
 function getUserInfo($connection,$email)
 {
-    $sql = "SELECT firstname,lastname,country FROM studentTable WHERE email = '" . $email . "'";
+    $sql = "SELECT firstname,lastname,country FROM studentTable WHERE email = ?";
     $preparedStatement = $connection->prepare($sql) or die("error: ".$connection->error);
     $preparedStatement->bind_param("s",$email);
     $preparedStatement->execute();
@@ -80,68 +80,95 @@ function removeALevels($connection,$list)
 
 }
 
+//do all interests appear in myInterests or OtherInterests?
 function getOtherInterests($connection, $id)
 //gets all interests not associated with the current student
 {
-    $sql = "SELECT interestName FROM interestTable WHERE interestID NOT IN " .
+    $sql = "SELECT interestID FROM interestTable WHERE interestID NOT IN " .
            "(SELECT interestID FROM studentInterestsTable WHERE studentID = " . $id . ")";
     $preparedStatement = $connection->prepare($sql) or die("error: ".$connection->error);
     $preparedStatement->execute();
-    $preparedStatement->bind_result($name);
+    $preparedStatement->bind_result($interestID);
 
     $list = array();
-
+    echo "other:";
     while($preparedStatement->fetch())
     {
-        array_push($list,$name);
+        //echo $interestID . ",";
+        array_push($list,$interestID);
     }
-
+    var_dump($list);
+    echo "<br/>";
+ //   echo gettype($list[0]);
     return $list;
 }
 
 function getMyInterests($connection, $id)
 //gets all the current student's interests
 {
-    $sql = "SELECT i.interestName FROM interestTable i,studentInterestsTable s WHERE i.interestID = s.interestID
-            AND s.studentID = " . $_SESSION['studentID'];
+    $sql = "SELECT interestID FROM studentInterestsTable s WHERE studentID = " . $_SESSION['studentID'];
 
     $preparedStatement = $connection->prepare($sql) or die("error: " . $connection->error);
     $preparedStatement->execute() or die("execution error");
     $preparedStatement->bind_result($interestID) or die("result error");
 
     $list = array();
-
+    echo "mine:";
     while ($preparedStatement->fetch())
     {
+        echo $interestID . ",";
         array_push($list,$interestID);
     }
 
+    echo gettype($list[0]);
+    echo "<br/>";
     return $list;
 }
 
 function getAllInterests($connection)
 {
-    $sql = "SELECT interestName FROM interestTable";
+    //gets IDs and names from the INterestTable
+    $sql = "SELECT interestID, interestName FROM interestTable";
     $preparedStatement = $connection->prepare($sql) or die("error: " . $connection->error);
     $preparedStatement->execute() or die("execution error");
-    $preparedStatement->bind_result($interestID) or die("result error");
+    $preparedStatement->bind_result($interestID, $interestName) or die("result error");
 
     $list = array();
 
+    echo "all:";
     while ($preparedStatement->fetch())
     {
-        array_push($list,$interestID);
+        echo $interestID . ",";
+        $row = $interestID . "|" . $interestName;
+        array_push($list,$row);
     }
 
+    echo gettype($list[0]);
+    echo "<br/>";
     return $list;
 }
 
 function addInterests($connection, $list)
 {
-    //loops thru numeric array of interest names, adding them to the studentInterestTable
+    $sql = "INSERT INTO studentInterestsTable (studentID,interestID) VALUES(?,?)";
+    $preparedStatement = $connection->prepare($sql) or die($connection->error);
+
+    for($i=0;$i<count($list);$i++)
+    {
+        $listVal = $list[$i];
+        $preparedStatement->bind_param("ii",$_SESSION['studentID'],$listVal) or die("error1");
+        $preparedStatement->execute() or die($connection->error);
+    }
 }
 
 function removeInterests($connection,$list)
 {
+    $sql = "DELETE FROM studentInterestsTable WHERE studentID = ? AND interestID = ?";
+    $preparedStatement = $connection->prepare($sql) or die($connection->error);
 
+    for($i=0;$i<count($list);$i++)
+    {
+        $preparedStatement->bind_param("ii",$_SESSION['studentID'],$list[$i]);
+        $preparedStatement->execute();
+    }
 }
