@@ -27,6 +27,50 @@ function setUserInfo($connection,$list)
     return $preparedStatement->execute();
 }
 
+/*
+ * @param object $connection a mysqli connection object
+ * @param int $id a student id
+ * @return true or false depending on whether the user has done the first run procedure
+ */
+function isFirstRunComplete($connection, $id)
+{
+    $sql = "SELECT firstRunCompelete FROM studentTable WHERE studentID = ?";
+    $preparedStatement = $connection->prepare($sql) or die("error: ".$connection->error);
+    $preparedStatement->bind_param("i",$id);
+    $preparedStatement->execute();
+    $preparedStatement->bind_result($firstRunComplete);
+
+    while($preparedStatement->fetch())
+    {
+        if($firstRunComplete == 1)
+        {
+            return true;
+        }
+
+        return false;
+    }
+}
+
+/*
+ * @param object $connection a mysqli connection object
+ * @param int $value the new value for firstRunComplete. Must be 0 or 1.
+ * @return false if an invalid value is passed in, else true
+ */
+function setFirstRunValue($connection,$value,$id)
+{
+    if(($value!=1) && ($value!=0))
+    {
+        return false;
+    }
+
+    $sql = "UPDATE studentTable SET firstRunComplete = ? WHERE studentID = ?";
+    $preparedStatement = $connection->prepare($sql) or die("error: ".$connection->error);
+    $preparedStatement->bind_param("ii",$value,$id);
+    $preparedStatement->execute();
+
+    return true;
+}
+
 function getAllGCSEsList($connection,$country)
 {
     $initial = substr($country,0,1);
