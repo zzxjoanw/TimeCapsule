@@ -27,6 +27,12 @@ if(isset($_POST['bttnLogin']))
         $_SESSION['firstname'] = $user[1];
         $_SESSION['lastname'] = $user[2];
         $_SESSION['country'] = $user[3];
+        $_SESSION['firstRunComplete'] = $user[4];
+
+        if($_SESSION['firstRunComplete'] == 0)
+        {
+            header("Location: firstrun.php");
+        }
     }
     else
     {
@@ -58,6 +64,13 @@ if(isset($_POST['bttnLogin']))
     </head>
     <body>
         <? include("includes/nav.php"); ?>
-        <div id="main"></div>
+        <div id="main">
+            <section>
+                <header>So what is this site?</header>
+            </section>
+            <section>
+                <header>How does it work?</header>
+            </section>
+        </div>
     </body>
 </html>
