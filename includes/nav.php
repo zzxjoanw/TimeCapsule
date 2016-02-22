@@ -12,10 +12,10 @@
                     <button type="submit" class="btn btn-submit" name="bttnLogin">Submit</button>
                 </form>
             </div>
-            <span>login</span>
+            <span><img src="../images/login.png"></span>
         </div>
         <div id="register">
-            <a href="register.php">register</a>
+            <a href="register.php"><img src="../images/register.png"></a>
         </div>
         <?
     }

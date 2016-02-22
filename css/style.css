@@ -1,6 +1,6 @@
 * { margin:0; padding:0; }
 
-#nav { background-color:#0c0; width:100%; height:150px; }
+#nav { background-color:#000; width:100%; height:75px; }
 
 #login { position:absolute; top:50px; right:10px; }
 #login-open { position:relative; border:1px solid lightgray; }
@@ -29,3 +29,67 @@
 input { padding:5px 0; }
 #register { right:220px; }
 #main {  }
+
+/* first run page */
+form#formShowInterests { height:200px; overflow-y: scroll; }
+form#formShowInterests table { height:200px; width:90%; margin:0 auto; overflow-y: scroll; border:1px solid darkgray; }
+
+/* profile page */
+table { border-spacing: 5px; width:100%; }
+section { height:200px; width:90%; }
+.cellBoxSpacer { width:50px; }
+input[type=checkbox] { visibility:hidden; }
+.cboxWrapper {
+    width: 40px;
+    height: 40px;
+    background: #ddd;
+    margin: 10px 10px 10px 0;
+
+    border-radius: 100%;
+    position: relative;
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+.cboxWrapper label
+{
+    display: block;
+    width: 30px;
+    height: 30px;
+
+    font-size: 24px;
+    line-height:30px;
+    text-align: center;
+    border-radius: 100px;
+
+    -webkit-transition: all .5s ease;
+    -moz-transition: all .5s ease;
+    -o-transition: all .5s ease;
+    -ms-transition: all .5s ease;
+    transition: all .5s ease;
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    z-index: 1;
+
+    background: #fff;
+
+    -webkit-box-shadow:inset 0 1px 3px rgba(0,0,0,0.5);
+    -moz-box-shadow:inset 0 1px 3px rgba(0,0,0,0.5);
+    box-shadow:inset 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.cboxWrapper input.cboxAdd + label { color:#26ca28; }
+.cboxWrapper input.cboxAdd:checked + label {
+    background: #26ca28;
+    color:#fff;
+}
+
+.cboxWrapper input.cboxRemove + label { color:#ca2628; }
+.cboxWrapper input.cboxRemove:checked + label {
+    background: #ca2628;
+    color:#fff;
+}
+.cboxAddInterests {}
+.cboxRemoveInterests {}
