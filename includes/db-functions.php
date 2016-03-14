@@ -33,12 +33,13 @@ function closeQuery($preparedStatement)
 
 function doLogin($connection, $email,$password)
 {
-    $sql = "SELECT studentID, firstname,lastname,country FROM studentTable WHERE email = ? AND password = ?"; //check column names
+    $sql = "SELECT studentID, firstname,lastname,country, firstRunComplete, careerID, interestList
+            FROM studentTable WHERE email = ? AND password = ?";
     $preparedStatement = $connection->prepare($sql) or die("error: " . $connection->error);
     $preparedStatement->bind_param("ss",$email,$password) or die("error in doLogin()");
     $preparedStatement->execute();
     $preparedStatement->store_result();
-    $preparedStatement->bind_result($studentID,$firstname,$lastname,$country);
+    $preparedStatement->bind_result($studentID,$firstname,$lastname,$country,$firstRunComplete,$careerID, $interestList);
 
     $list = array();
 
@@ -46,11 +47,18 @@ function doLogin($connection, $email,$password)
     {
         while($preparedStatement->fetch())
         {
+            $careerName = getCareerNameByID($connection,$careerID);
+
             array_push($list,$studentID);
             array_push($list,$firstname);
             array_push($list,$lastname);
             array_push($list,$country);
+            array_push($list,$firstRunComplete);
+            array_push($list,$careerName);
+            array_push($list,$interestList);
         }
+        getMyCareerInfo($connection, $studentID); //adds careerName to the session array
+        array_push($list,getMyGCSEs($connection,$studentID));
         return $list;
     }
     return false;
@@ -90,10 +98,18 @@ function getSchoolList($connection,$country)
     return $output;
 }
 
-function insertStudent($sql, $connection, $firstname, $lastname, $email, $password)
+function insertStudent($connection, $firstname, $lastname, $email, $password)
 {
+    $sql = "INSERT INTO studentTable(firstname,lastname,email,password,firstRunComplete) VALUES(?,?,?,?,0)";
     $preparedStatement = $connection->prepare($sql) or die("error: ".$preparedStatement->error());
     $preparedStatement->bind_param("ssss",$firstname,$lastname,$email,$password) or die("error: ".$preparedStatement->error());
-    $result = $preparedStatement->execute();
+    try
+    {
+        $preparedStatement->execute() or die("Error: Something went wrong. <a href='register.php'>Return</a> to the registration page.");
+    }
+    catch(Exception $exception)
+    {
+        echo "Error: ".$exception->getMessage();
+    }
+    echo "You've successfully registered with TimeCapsule! <a href='firstrun.php'>Click here</a> to start your journey!.";
 }
-?>
