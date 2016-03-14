@@ -1,42 +1,44 @@
-* { margin:0; padding:0; }
-
-#nav { background-color:#000; width:100%; height:75px; }
-
-#login { position:absolute; top:50px; right:10px; }
-#login-open { position:relative; border:1px solid lightgray; }
-#login span
-{
-    position:relative;
-    display: inline-block;
-    height:50px;
-    width:200px;
-    background-color:#0c0;
-    border:1px solid #0a0;
-    outline: 1px solid #0b0; /* a bit darker than the bg */
-    border-top: 1px solid green;
-    line-height: 50px;
-    text-align: center;
-    color:white;
-    font-weight:bold;
+/* Aller fonts are limited to 25k website users with a free license */
+@font-face {
+    font-family: AllerDisplay;
+    src:url(../fonts/AllerDisplay.ttf) format("truetype");
 }
 
-#login span:hover { color:#0c0; background-color: white; }
+* { margin:0; padding:0; }
 
-#register { position:absolute; top:50px; right:10px; }
-#register-open { position:relative; border:1px solid lightgray; }
-#register span { position:relative; display: inline-block; height:50px; width:200px; background-color:#0c0; border:1px solid #0a0; }
+/* all pages */
+section { width:90%; border-radius: 20px; border:1px solid lightgrey; margin:25px 5%; padding:20px; }
+section header { font-family: AllerDisplay, arial, sans-serif; color:blue; font-size:28px; }
+
+/* nav.php */
+#nav { background-color:#000; width:100%; height:50px; transition:height 0.5s; }
+#nav svg { height:50px; width:50px; transition:height 0.5s; }
+#nav:hover { height:100px; transition:height 0.5s; }
+#nav:hover svg { height:100px; width:100px; transition:height 0.5s; }
+#nav #logo { color:white; float:left; }
+#nav #navButtons { float:right; top:-20px; }
+
+#nav img { height:50px; transition:height 1s; }
+#nav:hover img { height:100px; transition:height 0.5s; }
+#nav button { background:none; border:none; }
+#nav #logo { color:white; float:left; }
+#nav #navButtons { float:right; top:-20px; }
+
+/* profile.php */
+.fixedMenu { position:fixed; left:0; top:200px; }
 
 input { padding:5px 0; }
 #register { right:220px; }
-#main {  }
+#main { width:50%; margin-left: 25%; }
+#main header {  }
+form input { float:right; }
 
 /* first run page */
-form#formShowInterests { height:200px; overflow-y: scroll; }
-form#formShowInterests table { height:200px; width:90%; margin:0 auto; overflow-y: scroll; border:1px solid darkgray; }
+/*form#formShowInterestsFirstRun {  overflow-y: scroll; }*/
+form#formShowInterestsFirstRun table { height:200px; overflow-y: scroll; width:90%; margin:0 auto; border:1px solid darkgray; }
 
 /* profile page */
 table { border-spacing: 5px; width:100%; }
-section { height:200px; width:90%; }
 .cellBoxSpacer { width:50px; }
 input[type=checkbox] { visibility:hidden; }
 .cboxWrapper {
