@@ -80,6 +80,34 @@ function setFirstRunValue($connection,$value,$id)
     return true;
 }
 
+function getGCSEs($connection,$country="",$id=0)
+{
+    if($country != "")
+    {
+        $sql = "SELECT g.id, g.name FROM studentGCSETable AS s, gcseTable AS g
+                WHERE gcseCountryList LIKE '%" . substr($country,0,1) . "%'";
+        $preparedStatement = $connection->prepare($sql) or die($connection->error);
+    }
+    else
+    {
+        $sql = "SELECT g.id, g.name FROM studentGCSETable s, gcseTable g WHERE s.studentID = ? AND s.gcseID = g.gcseID";
+        $preparedStatement = $connection->prepare($sql) or die($connection->error);
+        $preparedStatement->bind_param("i",$id);
+    }
+
+    $preparedStatement->execute();
+    $preparedStatement->bind_result($gcseID, $gcseName);
+
+    $list = array();
+    while($preparedStatement->fetch())
+    {
+        $row = $gcseID . "|" . $gcseName;
+        array_push($list,$row);
+    }
+
+    return $list;
+}
+
 function getAllGCSEs($connection, $country)
 {
     $gcseID = NULL;
@@ -103,17 +131,21 @@ function getAllGCSEs($connection, $country)
 
 function getMyGCSEs($connection, $id)
 {
-    $sql = "SELECT s.gcseID FROM studentGCSETable s, gcseTable g WHERE s.studentID = ? AND s.gcseID = g.gcseID";
+    $sql = "SELECT DISTINCT g.gcseID, g.gcseName FROM studentGCSETable AS s, gcseTable AS g
+            WHERE s.studentID = ? AND s.gcseID = g.gcseID";
     $preparedStatement = $connection->prepare($sql) or die($connection->error);
     $preparedStatement->bind_param("i",$id);
     $preparedStatement->execute();
-    $preparedStatement->bind_result($id);
+    $preparedStatement->bind_result($id,$name);
 
     $list = array();
 
     while($preparedStatement->fetch())
     {
-        array_push($list,$id);
+        $subArray = array();
+        array_push($subArray,$id);
+        array_push($subArray,$name);
+        array_push($list,$subArray);
     }
 
     return $list;
@@ -185,17 +217,21 @@ function getAllALevels($connection,$country)
 
 function getMyALevels($connection, $id)
 {
-    $sql = "SELECT s.aLevelID FROM studentALevelTable s, aLevelTable a WHERE s.studentID = ? AND s.aLevelID = a.aLevelID";
+    $sql = "SELECT DISTINCT a.aLevelID, a.aLevelName FROM studentALevelTable AS s, aLevelTable AS a
+            WHERE s.studentID = ? AND s.aLevelID = a.aLevelID";
     $preparedStatement = $connection->prepare($sql) or die($connection->error);
     $preparedStatement->bind_param("i",$id);
     $preparedStatement->execute();
-    $preparedStatement->bind_result($id);
+    $preparedStatement->bind_result($id, $name);
 
     $list = array();
 
     while($preparedStatement->fetch())
     {
-        array_push($list,$id);
+        $subArray = array();
+        array_push($subArray,$id);
+        array_push($subArray,$name);
+        array_push($list,$subArray);
     }
 
     return $list;
@@ -301,7 +337,7 @@ class career
 
 function getMyCareerInfo($connection,$studentID)
 {
-    $sql = "SELECT * FROM careerTable WHERE id = (SELECT careerID FROM studentTable WHERE id = ?)";
+    $sql = "SELECT careerName FROM careersTable WHERE id = (SELECT careerID FROM studentTable WHERE id = ?)";
     $preparedStatement = $connection->prepare($sql) or die($connection->error);
     $preparedStatement->bind_param("i",$studentID);
     $preparedStatement->execute();
@@ -314,14 +350,14 @@ function getMyCareerInfo($connection,$studentID)
 
 function getCareerNameByID($connection,$id)
 {
-    $sql = "SELECT careerName FROM careerTable WHERE id = ?";
+    $sql = "SELECT careerName FROM careersTable WHERE id = ?";
     $preparedStatement = $connection->prepare($sql) or die($connection->error);
     $preparedStatement->bind_param("i",$id);
     $preparedStatement->execute();
     $preparedStatement->bind_result($careerName);
     while($preparedStatement->fetch())
     {
-        $_SESSION['careerName'];
+        return $careerName;
     }
 }
 
