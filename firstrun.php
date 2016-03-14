@@ -7,7 +7,7 @@
  */
 
 session_start();
-if(!isset($_SESSION['firstname']))
+if(!isset($_SESSION['studentID']))
 {
     header('Location: main.php') ;
 }
@@ -39,16 +39,15 @@ if(isset($_POST['bttnInterests']))
 }
 
 //third
-if(isset($_POST['bttnCareer']))
+else if(isset($_POST['bttnCareer']))
 {
     $title = "Time Capsule - Choose A-Level Options";
     setCareer($connection,$_POST['careerChoice'],$_SESSION['studentID']);
-
     $aLevelsList = getAllALevels($connection,$_SESSION['country']);
 }
 
 //fourth
-if(isset($_POST['bttnALevels']))
+else if(isset($_POST['bttnALevels']))
 {
     $title = "Time Capsule - Choose GCSE Options";
     addALevels($connection, $_POST['addALevels']);
@@ -56,16 +55,17 @@ if(isset($_POST['bttnALevels']))
 }
 
 //fifth
-if(isset($_POST['bttnGCSEs']))
+else if(isset($_POST['bttnGCSEs']))
 {
     addGCSEs($connection,$_POST['addGCSEs']);
-    header('Location:profile.php');
+    setFirstRunValue($connection,1,$_SESSION['studentID']);
+    header('Location: profile.php');
 }
-
 ?>
 
 <html>
 <head>
+    <title><? echo $title; ?></title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.js"></script>
@@ -111,7 +111,7 @@ if(isset($_POST['bttnGCSEs']))
         {
             ?>
             <section>
-                <form action="firstrun.php" method="post" id="formShowALevels">
+                <form action="firstrun.php" method="post" id="formShowGCSEs">
                     <table>
                         <th></th>
                         <th>Name</th>
