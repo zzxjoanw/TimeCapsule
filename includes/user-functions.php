@@ -313,8 +313,9 @@ function getMyInterests($connection, $id)
     {
         $row = $interestList;
         $studentArray = explode(",",$row);
+        array_push($studentInterestList,$studentArray);
     }
-    return $studentArray;
+    return $studentInterestList;
 }
 
 class career
