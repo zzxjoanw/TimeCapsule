@@ -8,135 +8,126 @@
 
     include("includes/db-functions.php");
     $connection = openDBConnection();
-    $schoolNamesListEngland = getSchoolList($connection, "England");
-    $schoolNamesListNI = getSchoolList($connection, "Northern Ireland");
-    $schoolNamesListScotland = getSchoolList($connection, "Scotland");
-    $schoolNamesListWales = getSchoolList($connection, "Wales");
 
-    $firstName = $_POST['firstName'] || "";
-    $firstName = $_POST['lastName'] || "";
-    function isValid()
+    $errorFirstNameDisplay = "none";
+    $errorLastNameDisplay = "none";
+    $errorPasswordDisplay = "none";
+    $errorEmailDisplay = "none";
+    $errorConfirmPasswordDisplay = "none";
+    $errorPasswordMatchDisplay = "none";
+
+    if(isset($_POST['bttnSubmit']))
     {
-        $flag = 1;
-        if(!isset($_POST['firstName']) || ($_POST['firstName'] == ""))
+        $errorFree = 1;
+
+        if($_POST['firstName'] == "")
         {
-            $flag = 0;
+            $errorFirstNameDisplay = "inline-block";
+            $errorFree = 0;
         }
 
-        if(!isset($_POST['lastName']) || ($_POST['lastName'] == ""))
+        if($_POST['lastName'] == "")
         {
-            $flag = 0;
+            $errorLastNameDisplay = "inline-block";
+            $errorFree = 0;
         }
 
-        if(!isset($_POST['password']) || ($_POST['password'] == ""))
+        if($_POST['password'] == "")
         {
-            $flag = 0;
+            $errorPasswordDisplay = "inline-block";
+            $errorFree = 0;
         }
 
-        if(!isset($_POST['role']) || ($_POST['role'] == ""))
+        if($_POST['confirmPassword'] == "")
         {
-            $flag = 0;
+            $errorConfirmPasswordDisplay = "inline-block";
+            $errorFree = 0;
         }
 
-        if(!isset($_POST['schoolname']) || ($_POST['schoolname'] == ""))
+        if($_POST['password'] != $_POST['confirmPassword'])
         {
-            $flag = 0;
+            $errorPasswordMatchDisplay = "inline-block";
+            $errorFree = 0;
         }
 
-        return $flag;
+        if($_POST['email'] == "")
+        {
+            $errorEmailDisplay = "inline-block";
+            $errorFree = 0;
+        }
     }
 ?>
 <html>
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="css/style.css">
-
-    <script language="JavaScript">
-        $(document).ready(function() {
-            $("#login-open").hide();
-            $("#register-open").hide();
-
-            $("#login span").click(function () {
-                $("#login-open").toggle();
-                var isLoginShown = $("#login-open").is(":visible");
-            });
-
-            //show only the school dropdown for the selected country
-            schoolDropdownHandler(); //onload
-            $("#country").change(function(){
-                schoolDropdownHandler();
-            });
-
-            function schoolDropdownHandler() {
-                country = $('#country').val();
-                idString = "#schools" + country;
-                alert(idString);
-                $('.schools').hide();
-                $(idString).show();
-            }
-        });
-    </script>
 </head>
 <body>
-    <? include("includes/nav.php"); ?>
-    <? if(isValid() == 0) { ?>
-        <div id="main">
-            <form class="" action="register.php" method="post">
-                <div class="form-group">
-                    <label for="firstName">First Name</label>
-                    <input type="text" name="firstName" id="firstName" value="<? echo $firstName ?>">
-                </div>
-                <div class="form-group">
-                    <label for="lastName">Last Name</label>
-                    <input type="text" name="lastName" id="lastName" value="<? echo $lastName ?>">
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label><input type="password" name="password" id="password">
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label><input type="text" name="email" id="email">
-                </div>
-                <label for="role">Role</label>
-                <select class="form-control" name="role" id="role">
-                    <option value="student">Student</option>
-                    <option value="parent">Parent</option>
-                    <option value="school">School</option>
-                </select>
-                <label for="country">Country</label>
-                <select class="form-control" name="country" id="country">
-                    <option value="England">England</option>
-                    <option value="NorthernIreland">Northern Ireland</option>
-                    <option value="Scotland">Scotland</option>
-                    <option value="Wales">Wales</option>
-                </select>
-                <div class="form-group">
-                    <?
-                        echo $schoolNamesListEngland;
-                        echo $schoolNamesListNI;
-                        echo $schoolNamesListScotland;
-                        echo $schoolNamesListWales;
-                    ?>
-                </div>
-                <button class="btn btn-submit">Register</button>
-            </form>
-        </div>
-    <? }
-        else
+    <?
+        include('includes/nav.php');
+        if($errorFree == 1)
         {
+            //include("includes/nav.php");
             $firstname = htmlspecialchars($_POST['firstName']);
             $lastname = htmlspecialchars($_POST['lastName']);
             $email = htmlspecialchars($_POST['email']);
+            //$password = password_hash(htmlspecialchars($_POST['password']),PASSWORD_DEFAULT);
             $password = htmlspecialchars($_POST['password']);
-            $school = htmlspecialchars($_POST['school']);
 
-            $sql = "INSERT INTO studentTable(firstname,lastname,email,password) VALUES(?,?,?,?)";
-            insertStudent($sql,$connection,$firstname,$lastname,$email,$password);
+            //move to separate file
+            insertStudent($connection, $firstname, $lastname, $email, $password);
+
+            $connection->close();
         }
-        $connection->close();
+        else
+        {
+            ?>
+            <div id="main">
+                <form class="" action="register.php" method="post">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" name="firstName" id="firstName" value="<? echo $_POST['firstName']; ?>">
+                        <span class="error" id="errorFirstName" style="display:<? echo $errorFirstNameDisplay; ?>">
+                            Type your first name.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" name="lastName" id="lastName" value="<? echo $_POST['lastName']; ?>">
+                        <span class="error" id="errorLastName" style="display:<? echo $errorLastNameDisplay; ?>">
+                            Type your last name.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" name="password" id="password" value="<? echo $_POST['password']; ?>">
+                        <span class="error" id="errorPassword" style="display:<? echo $errorPasswordDisplay; ?>">
+                            Type your password.</span>
+                        <span class="error" id="errorPasswordMatch" style="display:<? echo $errorPasswordMatchDisplay; ?>">
+                            Passwords do not match</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" name="confirmPassword" id="confirmPassword">
+                        <span class="error" id="errorConfirmPassword" style="display:<? echo $errorConfirmPasswordDisplay; ?>">
+                            Type your password again.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="text" name="email" id="email">
+                        <span class="error" id="errorEmail" style="display:<? echo $errorEmailDisplay; ?>">
+                            Type your email.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="age">Age Range</label>
+                        <input type
+                    </div>
+                    <button class="btn btn-submit" name="bttnSubmit">Register</button>
+                </form>
+            </div>
+            <?
+        }
     ?>
 </body>
 </html>
