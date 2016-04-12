@@ -6,26 +6,38 @@
  * Time: 2:16 PM
  */
 
-/*
- * @param object $connection
- * @param string $email
+/**
+ * @param $connection object the mysql connection object from db-functions.php
+ * @param $email
+ * @return mixed
  */
-function getUserInfo($connection,$email)
+function getUserInfo($connection, $studentID)
 {
     $firstname = "";
     $lastname = "";
     $country = "";
 
-    $sql = "SELECT firstname,lastname,country FROM studentTable WHERE email = ?";
+    $sql = "SELECT firstname,lastname,country,currentYear FROM studentTable WHERE studentID = ?";
     $preparedStatement = $connection->prepare($sql) or die("error: ".$connection->error);
-    $preparedStatement->bind_param("s",$email);
+    $preparedStatement->bind_param("s",$studentID);
     $preparedStatement->execute();
-    $preparedStatement->bind_result($firstname,$lastname,$country);
+    $preparedStatement->bind_result($firstname,$lastname,$country,$currentYear);
 
-    return $preparedStatement->fetch_array(MYSQLI_NUM);
+    $list = array();
+    while($preparedStatement->fetch())
+    {
+        array_push($list,$firstname,$lastname,$country,$currentYear);
+    }
+
+    return $list;
 }
 
-function setUserInfo($connection,$list)
+/**
+ * @param $connection object the mysql connection object from db-functions.php
+ * @param $list
+ * @return mixed
+ */
+function setUserInfo($connection, $list)
 {
     //$list is a key-value array containing the columns to be updated for each user
 
@@ -51,13 +63,13 @@ function isFirstRunComplete($connection, $id)
 
     while($preparedStatement->fetch())
     {
-        if($firstRunComplete == 1)
+        if ($firstRunComplete == 1)
         {
             return true;
         }
-
-        return false;
     }
+
+    return false;
 }
 
 /*
@@ -80,33 +92,65 @@ function setFirstRunValue($connection,$value,$id)
     return true;
 }
 
+function getPathInfo($connection)
+{
+    $sql = "SELECT pathName,currentLevel,maxLevel,progress FROM pathTable WHERE studentID = ?";
+    $preparedStatement = $connection->prepare($sql);
+    $preparedStatement->bind_param("i", $_SESSION['studentID']);
+    $preparedStatement->execute();
+    $preparedStatement->bind_result($pathName, $currentLevel, $maxLevel,$progress);
+
+    $pathOutput = array();
+    while ($preparedStatement->fetch())
+    {
+        $row = array();
+        array_push($row, $pathName);
+        array_push($row, $currentLevel);
+        array_push($row, $maxLevel);
+        $progress = str_split($progress);
+        array_push($row, $progress);
+        array_push($pathOutput, $row);
+    }
+
+    return $pathOutput;
+}
+
+/*
 function getGCSEs($connection,$country="",$id=0)
 {
+    $gcseID = NULL;
+    $gcseName = NULL;
+    $gcseCode = NULL;
+    
     if($country != "")
     {
-        $sql = "SELECT g.id, g.name FROM studentGCSETable AS s, gcseTable AS g
+        $sql = "SELECT g.gcseID, g.gcseName,g.gcseCode FROM studentGCSETable AS s, gcseTable AS g
                 WHERE gcseCountryList LIKE '%" . substr($country,0,1) . "%'";
         $preparedStatement = $connection->prepare($sql) or die($connection->error);
     }
     else
     {
-        $sql = "SELECT g.id, g.name FROM studentGCSETable s, gcseTable g WHERE s.studentID = ? AND s.gcseID = g.gcseID";
+        $sql = "SELECT g.gcseID, g.gcseName, g.gcseCode FROM studentGCSETable s, gcseTable g WHERE s.studentID = ? AND s.gcseID = g.gcseID";
         $preparedStatement = $connection->prepare($sql) or die($connection->error);
         $preparedStatement->bind_param("i",$id);
     }
 
     $preparedStatement->execute();
-    $preparedStatement->bind_result($gcseID, $gcseName);
+    $preparedStatement->bind_result($gcseID, $gcseName, $gcseCode);
 
     $list = array();
     while($preparedStatement->fetch())
     {
-        $row = $gcseID . "|" . $gcseName;
+        $row = array();
+        array_push($row,$gcseID);
+        array_push($row,$gcseName);
+        array_push($row,$gcseCode);
+//        $row = $gcseID . "|" . $gcseName . "|" . $gcseCode;
         array_push($list,$row);
     }
 
     return $list;
-}
+}*/
 
 function getAllGCSEs($connection, $country)
 {
@@ -129,8 +173,14 @@ function getAllGCSEs($connection, $country)
     return $list;
 }
 
+/**
+ * @param $connection
+ * @param $id
+ * @return array
+ */
 function getMyGCSEs($connection, $id)
 {
+    $name = NULL;
     $sql = "SELECT DISTINCT g.gcseID, g.gcseName FROM studentGCSETable AS s, gcseTable AS g
             WHERE s.studentID = ? AND s.gcseID = g.gcseID";
     $preparedStatement = $connection->prepare($sql) or die($connection->error);
@@ -169,19 +219,33 @@ function getOtherGCSEs($connection, $id)
     return $list;
 }
 
+/*
 function addGCSEs($connection, $list)
 {
-    $sql = "INSERT INTO studentGCSETable (studentID,gcseID) VALUES(?,?)";
+    $sql = "INSERT INTO pathTable (JACSCode,pathName,gcseProgress)
+            VALUES (?,?,0)
+            ON DUPLICATE KEY UPDATE gcseProgress=0";
+    
     $preparedStatement = $connection->prepare($sql) or die($connection->error);
 
     for($i=0;$i<count($list);$i++)
     {
-        $listVal = $list[$i];
-        $preparedStatement->bind_param("ii",$_SESSION['studentID'],$listVal) or die("error1");
+        $listVal = explode("|",$list[$i]);
+        $preparedStatement->bind_param("ss",$listVal[0],$listVal[1]);
         $preparedStatement->execute() or die($connection->error);
     }
 }
 
+function updateGCSE($connection,$code,$newValue)
+{
+    $sql = "UPDATE pathTable SET gcseProgress=? WHERE JACSCode=?";
+    $preparedStatement = $connection->prepare($sql);
+    $preparedStatement->bind_param("is",$newValue,$code);
+    $preparedStatement->execute();
+}*/
+
+/*
+ * part of updateGCSE() now
 function removeGCSEs($connection, $list)
 {
     $sql = "DELETE FROM studentGCSETable WHERE studentID = ? AND gcseID = ?";
@@ -192,7 +256,7 @@ function removeGCSEs($connection, $list)
         $preparedStatement->bind_param("ii",$_SESSION['studentID'],$list[$i]);
         $preparedStatement->execute();
     }
-}
+}*/
 
 function getAllALevels($connection,$country)
 {
@@ -217,6 +281,7 @@ function getAllALevels($connection,$country)
 
 function getMyALevels($connection, $id)
 {
+    $name = NULL;
     $sql = "SELECT DISTINCT a.aLevelID, a.aLevelName FROM studentALevelTable AS s, aLevelTable AS a
             WHERE s.studentID = ? AND s.aLevelID = a.aLevelID";
     $preparedStatement = $connection->prepare($sql) or die($connection->error);
@@ -300,23 +365,7 @@ function getOtherInterests($connection, $id)
     return $list;
 }
 
-function getMyInterests($connection, $id)
-//gets all the current student's interests
-{
-    $interestList = NULL;
-    $sql = "SELECT interestList FROM studentTable WHERE studentID = $id";
-    $preparedStatement = $connection->prepare($sql) or die($connection->error);
-    $preparedStatement->execute();
-    $preparedStatement->bind_result($interestList);
-    $studentInterestList = array();
-    while ($preparedStatement->fetch())
-    {
-        $row = $interestList;
-        $studentArray = explode(",",$row);
-        array_push($studentInterestList,$studentArray);
-    }
-    return $studentInterestList;
-}
+
 
 class career
 {
@@ -336,8 +385,52 @@ class career
     function setDescription($description) { $this->description; }
 }
 
+/*
+ * gets all information about all careers or about all careers associated with a student id
+ *
+ * @param object $connection a mysql connection object
+ * @param int $studentID optional. the student's id
+ * @return array a 2d array of strings
+ */
+function getCareerInfo($connection,$studentID=-1)
+{
+    $id = NULL;
+    $careerName = NULL;
+    $interestList = NULL;
+    $careerDescription = NULL;
+
+    if($studentID==-1)
+    {
+        $sql = "SELECT * FROM careersTable";
+        $preparedStatement = $connection->prepare($sql) or die($connection->error);
+    }
+    else
+    {
+        $sql = "SELECT * FROM careersTable WHERE id = (SELECT careerID FROM studentTable WHERE studentID = ?)";
+        $preparedStatement = $connection->prepare($sql) or die($connection->error);
+        $preparedStatement->bind_param("i",$studentID);
+    }
+
+    $preparedStatement->execute();
+    $preparedStatement->bind_result($id,$careerName,$interestList, $careerDescription);
+
+    $careerArray = Array();
+    while($preparedStatement->fetch())
+    {
+        $row = Array();
+        array_push($row,$id);
+        array_push($row,$careerName);
+        array_push($row,$careerDescription);
+        array_push($row,$interestList);
+        array_push($careerArray,$row);
+    }
+
+    return $careerArray;
+}
+
 function getMyCareerInfo($connection,$studentID)
 {
+    $careerName = NULL;
     $sql = "SELECT careerName FROM careersTable WHERE id = (SELECT careerID FROM studentTable WHERE id = ?)";
     $preparedStatement = $connection->prepare($sql) or die($connection->error);
     $preparedStatement->bind_param("i",$studentID);
@@ -351,6 +444,8 @@ function getMyCareerInfo($connection,$studentID)
 
 function getCareerNameByID($connection,$id)
 {
+    $careerName = NULL;
+
     $sql = "SELECT careerName FROM careersTable WHERE id = ?";
     $preparedStatement = $connection->prepare($sql) or die($connection->error);
     $preparedStatement->bind_param("i",$id);
@@ -362,24 +457,49 @@ function getCareerNameByID($connection,$id)
     }
 }
 
-function getCareerInterests($connection)
+/**
+ * @param $connection
+ * @param int $studentID
+ * @return array
+ */
+function getCareerInterests($connection, $studentID = -1)
 //returns a 2d array of interests for each career
 {
-    $interests = NULL;
-    $sql = "SELECT interestList FROM careersTable";
-    $preparedStatement = $connection->prepare($sql) or die($connection->error);
-    $preparedStatement->execute();
-    $preparedStatement->bind_result($interests);
-    $careerNameList = array();
-    $careerInterestList = array();
-    while($preparedStatement->fetch())
+    if($studentID == -1)
     {
-        array_push($careerInterestList,explode(",",$interests));
-    }
+        //split this into two sections so the proper info will be passed to $careerInterestList on firsturn.php:33
+        $sql = "SELECT careerName, interestList, careerDescription FROM careersTable";
+        $preparedStatement = $connection->prepare($sql) or die($connection->error);
+        $preparedStatement->execute();
+        $preparedStatement->bind_result($careerName,$interestList, $careerDescription);
+        $careerInterestList = array();
+        while ($preparedStatement->fetch()) {
+            $row = array();
+            array_push($row,$careerName);
+            array_push($row,$interestList);
+            array_push($row,$careerDescription);
+            array_push($careerInterestList,$row);
+        }
 
-    return $careerInterestList;
+        return $careerInterestList;
+    }
+    else
+    {
+        //split this into two sections so the proper info will be passed to $careerInterestList on firsturn.php:33
+        $sql = "SELECT interestList FROM careersTable WHERE studentID = ?";
+        $preparedStatement = $connection->prepare($sql) or die($connection->error);
+        $preparedStatement->bind_param("i",$studentID);
+        $preparedStatement->execute();
+        $preparedStatement->bind_result($interests);
+        while ($preparedStatement->fetch()) {
+            array_push($careerInterestList, explode(",", $interests));
+        }
+
+        return $careerInterestList;
+    }
 }
 
+/*
 function getCareerInfo($connection)
 {
     $sql = "SELECT * FROM careersTable";
@@ -399,10 +519,11 @@ function getCareerInfo($connection)
     }
 
     $_SESSION['careerArray'] = $careerArray;
-}
+}*/
 
 function getCareerDescriptions($connection)
 {
+    $description = NULL;
     $sql = "SELECT careerDescription FROM careersTable";
     $preparedStatement = $connection->prepare($sql) or die($connection->error);
     $preparedStatement->execute();
@@ -415,8 +536,14 @@ function getCareerDescriptions($connection)
     return $careerDescriptionList;
 }
 
+/**
+ * @param $connection
+ * @return array
+ */
 function getCareerIDs($connection)
 {
+    $id = NULL;
+    
     $sql = "SELECT id FROM careersTable";
     $preparedStatement = $connection->prepare($sql) or die($connection->error);
     $preparedStatement->execute();
@@ -432,6 +559,7 @@ function getCareerIDs($connection)
 
 function getCareerNames($connection)
 {
+    $name = NULL;
     $sql = "SELECT careerName FROM careersTable";
     $preparedStatement = $connection->prepare($sql) or die($connection->error);
     $preparedStatement->execute();
@@ -460,36 +588,109 @@ function intCheck($array1,$array2)
     return (count($arrayIntersection)/count($array1))*100;
 }
 
+//interests
+function getInterests($connection,$id=-1)
+{
+    $interestID = NULL;
+    $interestName = NULL;
+    $interestCategory = NULL;
+    
+    if($id==-1)
+    {
+        $sql = "SELECT interestID, interestName, interestCategory FROM interestTable ORDER BY interestCategory";
+        $preparedStatement = $connection->prepare($sql) or die("error: " . $connection->error);
+
+        $preparedStatement->execute() or die("execution error");
+        $preparedStatement->bind_result($interestID, $interestName, $interestCategory) or die($connection->error);
+
+        $list = array();
+        while ($preparedStatement->fetch())
+        {
+            $row = array();
+            array_push($row,$interestID);
+            array_push($row,$interestName);
+            array_push($row,$interestCategory);
+            array_push($list,$row);
+        }
+    }
+    else
+    {
+        $sql = "SELECT interestID, interestName, interestCategory FROM interestTable WHERE interestID IN
+          (SELECT interestID FROM studentInterestsTable WHERE studentID = ?)";
+        $preparedStatement = $connection->prepare($sql) or die("getInterests() default error ".$connection->error);
+        $preparedStatement->bind_param("i",$_SESSION['studentID']);
+
+        $preparedStatement->execute() or die("execution error");
+        $preparedStatement->bind_result($interestID,$interestName,$interestCategory) or die("e".$connection->error);
+
+        $list = array();
+        while ($preparedStatement->fetch())
+        {
+            $row = array();
+            array_push($row,$interestID);
+            array_push($row,$interestName);
+            array_push($row,$interestCategory);
+            array_push($list,$row);
+        }
+    }
+
+    return $list;
+}
+/*
 function getAllInterests($connection)
 {
-    $interestID = $interestName = NULL;
     //gets IDs and names from the INterestTable
-    $sql = "SELECT interestID, interestName FROM interestTable";
+    $sql = "SELECT interestID, interestName, interestCategory FROM interestTable ORDER BY interestCategory";
     $preparedStatement = $connection->prepare($sql) or die("error: " . $connection->error);
     $preparedStatement->execute() or die("execution error");
-    $preparedStatement->bind_result($interestID, $interestName) or die("result error");
+    $preparedStatement->bind_result($interestID, $interestName, $interestCategory) or die("result error");
 
     $list = array();
 
     while ($preparedStatement->fetch())
     {
-        $row = $interestID . "|" . $interestName;
+        $row = $interestID . "|" . $interestName . "|" . $interestCategory;
         array_push($list,$row);
     }
 
     return $list;
 }
 
+function getMyInterests($connection, $id)
+{
+    //$sql = "SELECT interestList FROM studentTable WHERE studentID = $id";
+    $sql = "SELECT interestID, interestName FROM interestTable WHERE interestID IN
+      (SELECT * FROM studentInterestTable WHERE studentID = ?)";
+    $preparedStatement = $connection->prepare($sql) or die($connection->error);
+    $preparedStatement->bind_param("i",$_SESSION['studentID']);
+    $preparedStatement->execute();
+    $preparedStatement->bind_result($interestID, $interestName);
+    $studentInterestList = array();
+    while ($preparedStatement->fetch())
+    {
+        $row = array();
+        array_push($row,$interestID);
+        array_push($row,$interestName);
+        array_push($studentInterestList,$row);
+    }
+    return $studentInterestList;
+}
+*/
+
+/**
+ * @param $connection
+ * @param $list
+ * @param $id
+ */
 function addInterests($connection, $list, $id)
 {
-    $id = $_SESSION['studentID'];
-
-    $listString = implode(",",$list);
-
-    $sql = "UPDATE studentTable SET interestList = ? WHERE studentID = ?";
+    $sql = "INSERT INTO studentInterestsTable (studentID,interestID) VALUES(?,?)";
     $preparedStatement = $connection->prepare($sql) or die($connection->error);
-    $preparedStatement->bind_param("si",$listString,$id);
-    $preparedStatement->execute() or die($connection->error);
+    
+    for($i=0;$i<count($list);$i++) {
+        $preparedStatement->bind_param("ii", $id, $list[$i]);
+        $preparedStatement->execute(); //will silently fail if studentID/interestID combo already in db
+    }
 }
 
 function removeInterests($connection,$list)
