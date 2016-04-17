@@ -7,14 +7,19 @@
 * { margin:0; padding:0; }
 
 /* all pages */
-section { width:90%; border-radius: 20px; border:1px solid lightgrey; margin:25px 5%; padding:20px; }
-section header { font-family: AllerDisplay, arial, sans-serif; color:blue; font-size:28px; }
+section { position:relative; border-radius:20px; border:1px solid #d3d3d3; margin:25px 0; padding:20px; }
+header { font-family: AllerDisplay, arial, sans-serif; color:blue; font-size:28px; margin-bottom:5px; }
+section header:not(:first-child) { margin-top:10px; }
+section .btn-right
+{
+    position:absolute; right:0; top:0; height:100%; background-color:transparent; font-family:AllerDisplay, arial, sans-serif;
+}
 
 /* nav.php */
-#nav { background-color:#000; width:100%; height:50px; transition:height 0.5s; }
-#nav svg { height:50px; width:50px; transition:height 0.5s; }
-#nav:hover { height:100px; transition:height 0.5s; }
-#nav:hover svg { height:100px; width:100px; transition:height 0.5s; }
+#nav { background-color:#000; width:100%; height:50px; }
+#nav svg { height:50px; width:50px;  }
+#nav:hover { height:100px;  }
+#nav:hover svg { height:100px; width:100px; }
 #nav #logo { color:white; float:left; }
 #nav #navButtons { float:right; top:-20px; }
 
@@ -23,19 +28,19 @@ section header { font-family: AllerDisplay, arial, sans-serif; color:blue; font-
 #nav button { background:none; border:none; }
 #nav #logo { color:white; float:left; }
 #nav #navButtons { float:right; top:-20px; }
+#nav #greeting { float:left; color:white; }
 
 /* profile.php */
 .fixedMenu { position:fixed; left:0; top:200px; }
-
 input { padding:5px 0; }
 #register { right:220px; }
 #main { width:50%; margin-left: 25%; }
-#main header {  }
 form input { float:right; }
+a.editlink { color:black; }
 
 /* first run page */
 /*form#formShowInterestsFirstRun {  overflow-y: scroll; }*/
-form#formShowInterestsFirstRun table { height:200px; overflow-y: scroll; width:90%; margin:0 auto; border:1px solid darkgray; }
+form#formShowInterestsFirstRun table { overflow-y: scroll; width:90%; margin:0 auto; }
 
 /* profile page */
 table { border-spacing: 5px; width:100%; }
@@ -49,9 +54,6 @@ input[type=checkbox] { visibility:hidden; }
 
     border-radius: 100%;
     position: relative;
-    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 .cboxWrapper label
 {
@@ -83,15 +85,7 @@ input[type=checkbox] { visibility:hidden; }
 }
 
 .cboxWrapper input.cboxAdd + label { color:#26ca28; }
-.cboxWrapper input.cboxAdd:checked + label {
-    background: #26ca28;
-    color:#fff;
-}
+.cboxWrapper input.cboxAdd:checked + label { background: #26ca28; color:#fff; }
 
 .cboxWrapper input.cboxRemove + label { color:#ca2628; }
-.cboxWrapper input.cboxRemove:checked + label {
-    background: #ca2628;
-    color:#fff;
-}
-.cboxAddInterests {}
-.cboxRemoveInterests {}
+.cboxWrapper input.cboxRemove:checked + label { background: #ca2628; color:#fff; }
